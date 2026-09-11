@@ -1,0 +1,131 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+    --color-csu-maroon-dark: #3B060F;
+    --color-csu-maroon: #6B0F1A;
+    --color-csu-maroon-mid: #801423;
+    --color-csu-maroon-light: #9C1C2E;
+
+    --color-csu-green-dark: #3B060F;
+    --color-csu-green: #6B0F1A;
+    --color-csu-green-mid: #801423;
+    --color-csu-green-light: #9C1C2E;
+    
+    --color-csu-gold: #FFC107;
+    --color-csu-gold-dark: #D49B00;
+    --color-csu-gold-light: #FFF0B3;
+}
+
+@layer utilities {
+    .bg-csu-dark {
+        background-color: #3B060F;
+    }
+    .bg-csu-maroon {
+        background-color: #6B0F1A;
+    }
+    .bg-csu-green {
+        background-color: #6B0F1A;
+    }
+    .bg-csu-maroon-mid {
+        background-color: #801423;
+    }
+    .bg-csu-green-mid {
+        background-color: #801423;
+    }
+    .bg-csu-gold {
+        background-color: #FFC107;
+    }
+    .text-csu-gold {
+        color: #FFC107;
+    }
+    .text-csu-maroon {
+        color: #6B0F1A;
+    }
+    .text-csu-green {
+        color: #6B0F1A;
+    }
+    .border-csu-gold {
+        border-color: #FFC107;
+    }
+    .border-csu-maroon {
+        border-color: #6B0F1A;
+    }
+    .border-csu-green {
+        border-color: #6B0F1A;
+    }
+}
+
+/* Custom Scrollbar for sidebar */
+aside ::-webkit-scrollbar {
+    width: 5px;
+}
+aside ::-webkit-scrollbar-track {
+    background: #3B060F;
+}
+aside ::-webkit-scrollbar-thumb {
+    background: #801423;
+    border-radius: 4px;
+}
+
+/* Scoped Dark Mode UI Enhancements */
+html.dark {
+    color-scheme: dark;
+}
+
+html.dark body {
+    background-color: #090d16 !important;
+    color: #f1f5f9;
+}
+
+html.dark .bg-white {
+    background-color: #0f172a;
+}
+
+html.dark .bg-slate-50 {
+    background-color: #0b1120;
+}
+
+html.dark .bg-slate-100 {
+    background-color: #1e293b;
+}
+
+html.dark .border-slate-100,
+html.dark .border-slate-200,
+html.dark .border-slate-300 {
+    border-color: #334155;
+}
+
+html.dark .text-slate-900,
+html.dark .text-slate-800,
+html.dark .text-slate-700 {
+    color: #f8fafc;
+}
+
+html.dark .text-slate-600 {
+    color: #cbd5e1;
+}
+
+html.dark .text-slate-500 {
+    color: #94a3b8;
+}
+
+html.dark input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+html.dark select,
+html.dark textarea {
+    background-color: #1e293b;
+    color: #f8fafc;
+    border-color: #475569;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+    color: #64748b;
+}
+
+html.dark table tbody tr:hover {
+    background-color: #1e293b;
+}
