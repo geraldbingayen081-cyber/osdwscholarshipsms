@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
     {
         // 1. Seed Authorized Admin User
         $admin = User::firstOrCreate(
-            ['email' => 'admin@csu.edu.ph'],
+            ['email' => 'adminako@csu.edu.ph'],
             [
                 'first_name' => 'Administrator',
                 'middle_name' => 'OSDW',
