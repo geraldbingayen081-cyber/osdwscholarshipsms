@@ -11,7 +11,9 @@ RUN npm run build
 # -------------------------------------------------------------
 # Stage 2: Production PHP-FPM + Nginx Application
 # -------------------------------------------------------------
+# Cache bust: v2 - PHP 8.4
 FROM php:8.4-fpm-alpine
+ARG CACHE_BUST=2
 
 # Install system dependencies & Nginx
 RUN apk add --no-cache \
@@ -50,7 +52,7 @@ COPY . .
 COPY --from=frontend /app/public/build ./public/build
 
 # Install PHP dependencies without dev packages
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs
 
 # Configure Nginx
 COPY docker/nginx.conf /etc/nginx/http.d/default.conf
