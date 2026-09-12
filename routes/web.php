@@ -128,6 +128,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Students Management
     Route::get('/students', [StudentManagementController::class, 'index'])->name('students.index');
     Route::get('/students/{student}', [StudentManagementController::class, 'show'])->name('students.show');
+    Route::put('/students/{student}', [StudentManagementController::class, 'update'])->name('students.update');
 
     // Reports & Analytics
     Route::get('/reports', [AdminReportController::class, 'index'])->name('reports.index');
