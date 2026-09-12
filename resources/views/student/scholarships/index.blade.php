@@ -32,6 +32,22 @@
     </div>
 
 
+    @if(!empty($hasActiveScholarship) && !empty($activeScholar))
+        <div class="mb-6 bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800/60 rounded-2xl p-4 sm:p-5 flex items-start gap-3 shadow-xs">
+            <div class="h-9 w-9 rounded-xl bg-amber-200 text-amber-900 font-extrabold flex items-center justify-center shrink-0">
+                ⚠️
+            </div>
+            <div>
+                <h4 class="text-xs font-extrabold text-amber-900 dark:text-amber-200 uppercase tracking-wider">
+                    Active Scholarship Policy Notice
+                </h4>
+                <p class="text-xs text-amber-800 dark:text-amber-300 mt-0.5 leading-relaxed">
+                    You are currently an active scholar under <strong>{{ $activeScholar->scholarship->name }}</strong>. In accordance with university scholarship guidelines, students who currently hold an active scholarship grant are not eligible to apply for other scholarship programs.
+                </p>
+            </div>
+        </div>
+    @endif
+
     <!-- Scholarships Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         @forelse($scholarships as $s)
@@ -83,7 +99,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                         </svg>
-                        View & Apply
+                        {{ !empty($hasActiveScholarship) ? 'View Details' : 'View & Apply' }}
                     </a>
                 </div>
             </div>

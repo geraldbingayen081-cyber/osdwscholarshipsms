@@ -192,4 +192,50 @@ class StudentApplicationTest extends TestCase
 
         $response->assertSessionHasErrors(['profile_photo']);
     }
+
+    public function test_active_scholar_cannot_apply_to_any_other_scholarship()
+    {
+        // Give student an active scholarship grant
+        \App\Models\Scholar::create([
+            'student_id' => $this->student->id,
+            'scholarship_id' => $this->scholarship->id,
+            'application_id' => Application::create([
+                'student_id' => $this->student->id,
+                'scholarship_id' => $this->scholarship->id,
+                'status' => 'approved',
+                'submitted_at' => now(),
+            ])->id,
+            'status' => 'active',
+            'approved_at' => now(),
+        ]);
+
+        // Create a 2nd scholarship program
+        $secondScholarship = Scholarship::create([
+            'name' => 'LGU Tuguegarao Educational Grant',
+            'provider' => 'LGU Tuguegarao',
+            'description' => 'Secondary scholarship grant',
+            'benefits' => 'PHP 10,000 per sem',
+            'available_slots' => 20,
+            'application_start_date' => now()->subDays(5)->format('Y-m-d'),
+            'application_deadline' => now()->addDays(30)->format('Y-m-d'),
+            'coverage_type' => 'semester',
+            'status' => 'open',
+        ]);
+
+        // 1. Attempting to visit apply form
+        $responseCreate = $this->actingAs($this->studentUser)->get("/student/scholarships/{$secondScholarship->id}/apply");
+        $responseCreate->assertRedirect("/student/scholarships/{$secondScholarship->id}");
+        $responseCreate->assertSessionHas('error');
+
+        // 2. Attempting to submit application directly
+        $responseStore = $this->actingAs($this->studentUser)->post("/student/scholarships/{$secondScholarship->id}/apply", []);
+        $responseStore->assertRedirect("/student/scholarships/{$secondScholarship->id}");
+        $responseStore->assertSessionHas('error');
+
+        // 3. Check scholarship show view indicates active scholar policy
+        $responseShow = $this->actingAs($this->studentUser)->get("/student/scholarships/{$secondScholarship->id}");
+        $responseShow->assertStatus(200);
+        $responseShow->assertSee('Active Scholar (Applications Restricted)');
+        $responseShow->assertSee('Application Ineligible: Active Scholar');
+    }
 }

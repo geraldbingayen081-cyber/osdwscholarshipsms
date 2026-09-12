@@ -60,6 +60,8 @@ class StudentDashboardController extends Controller
 
         $activeScholarRecord = $myScholars->firstWhere('status', 'active');
         $forRenewalRecord = $myScholars->firstWhere('status', 'for_renewal');
+        $hasActiveScholarship = $student->hasActiveScholarship();
+        $activeScholar = $student->activeScholarship();
 
         return view('student.dashboard', compact(
             'user', 
@@ -70,7 +72,9 @@ class StudentDashboardController extends Controller
             'myScholars', 
             'myCompliances',
             'activeScholarRecord', 
-            'forRenewalRecord'
+            'forRenewalRecord',
+            'hasActiveScholarship',
+            'activeScholar'
         ));
     }
 }

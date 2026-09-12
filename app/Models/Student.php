@@ -59,4 +59,21 @@ class Student extends Model
     {
         return $this->program ?? ($this->course ?? 'N/A');
     }
+
+    /**
+     * Check if student currently holds an active or for_renewal scholarship grant.
+     */
+    public function hasActiveScholarship(): bool
+    {
+        return $this->scholars()->whereIn('status', ['active', 'for_renewal'])->exists();
+    }
+
+    /**
+     * Get the student's active scholar grant record.
+     */
+    public function activeScholarship(): ?Scholar
+    {
+        return $this->scholars()->whereIn('status', ['active', 'for_renewal'])->with('scholarship')->first();
+    }
 }
+

@@ -37,13 +37,19 @@ class StudentScholarshipController extends Controller
 
         // Fetch student's existing application scholarship IDs to indicate "Already Applied"
         $appliedScholarshipIds = [];
-        if (Auth::user()->student) {
-            $appliedScholarshipIds = Application::where('student_id', Auth::user()->student->id)
+        $student = Auth::user()->student;
+        $hasActiveScholarship = false;
+        $activeScholar = null;
+
+        if ($student) {
+            $appliedScholarshipIds = Application::where('student_id', $student->id)
                 ->pluck('scholarship_id')
                 ->toArray();
+            $hasActiveScholarship = $student->hasActiveScholarship();
+            $activeScholar = $student->activeScholarship();
         }
 
-        return view('student.scholarships.index', compact('scholarships', 'search', 'appliedScholarshipIds'));
+        return view('student.scholarships.index', compact('scholarships', 'search', 'appliedScholarshipIds', 'hasActiveScholarship', 'activeScholar'));
     }
 
     /**
@@ -57,15 +63,19 @@ class StudentScholarshipController extends Controller
 
         $student = Auth::user()->student;
         $existingApplication = null;
+        $hasActiveScholarship = false;
+        $activeScholar = null;
 
         if ($student) {
             $existingApplication = Application::where('student_id', $student->id)
                 ->where('scholarship_id', $scholarship->id)
                 ->first();
+            $hasActiveScholarship = $student->hasActiveScholarship();
+            $activeScholar = $student->activeScholarship();
         }
 
         $isOpen = $scholarship->isOpenForApplication();
 
-        return view('student.scholarships.show', compact('scholarship', 'existingApplication', 'isOpen'));
+        return view('student.scholarships.show', compact('scholarship', 'existingApplication', 'isOpen', 'hasActiveScholarship', 'activeScholar'));
     }
 }

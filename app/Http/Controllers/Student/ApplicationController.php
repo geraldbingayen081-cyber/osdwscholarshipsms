@@ -36,7 +36,15 @@ class ApplicationController extends Controller
     {
         $student = Auth::user()->student;
 
-        // 1. Duplicate application check
+        // 1. Existing Active Scholar Check (students with an active scholarship cannot apply to another)
+        if ($student->hasActiveScholarship()) {
+            $activeScholar = $student->activeScholarship();
+            $progName = $activeScholar?->scholarship?->name ?? 'another scholarship program';
+            return redirect()->route('student.scholarships.show', $scholarship->id)
+                ->with('error', "You are already an active scholar/grantee of {$progName}. Students with an existing scholarship grant are not permitted to apply for another scholarship.");
+        }
+
+        // 2. Duplicate application check
         $exists = Application::where('student_id', $student->id)
             ->where('scholarship_id', $scholarship->id)
             ->exists();
@@ -46,13 +54,13 @@ class ApplicationController extends Controller
                 ->with('error', 'You have already submitted an application for this scholarship program.');
         }
 
-        // 2. Open period check
+        // 3. Open period check
         if (!$scholarship->isOpenForApplication()) {
             return redirect()->route('student.scholarships.show', $scholarship->id)
                 ->with('error', 'This scholarship program is currently not accepting applications or has passed its deadline.');
         }
 
-        // 3. Pre-qualification rules check
+        // 4. Pre-qualification rules check
         if (!is_null($scholarship->min_gwa) && $student->current_gwa && $student->current_gwa > $scholarship->min_gwa) {
             return redirect()->route('student.scholarships.show', $scholarship->id)
                 ->with('error', "Your current GWA ({$student->current_gwa}) exceeds the maximum allowed cutoff ({$scholarship->min_gwa}) for this scholarship.");
@@ -72,7 +80,15 @@ class ApplicationController extends Controller
     {
         $student = Auth::user()->student;
 
-        // Duplicate check
+        // 1. Active Scholar Check
+        if ($student->hasActiveScholarship()) {
+            $activeScholar = $student->activeScholarship();
+            $progName = $activeScholar?->scholarship?->name ?? 'another scholarship program';
+            return redirect()->route('student.scholarships.show', $scholarship->id)
+                ->with('error', "Application rejected: You are already an active grantee of {$progName}. Students holding an active scholarship cannot apply for additional scholarships.");
+        }
+
+        // 2. Duplicate check
         $exists = Application::where('student_id', $student->id)
             ->where('scholarship_id', $scholarship->id)
             ->exists();

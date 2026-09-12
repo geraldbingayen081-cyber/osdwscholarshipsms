@@ -263,7 +263,11 @@
                                 </div>
                             </div>
 
-                            @if($isPreQualified)
+                            @if(!empty($hasActiveScholarship))
+                                <button type="button" disabled class="inline-flex items-center px-3 py-1.5 bg-amber-100 text-amber-900 border border-amber-300 font-extrabold rounded-xl text-xs cursor-not-allowed shrink-0" title="You already have an active scholarship">
+                                    Already a Scholar
+                                </button>
+                            @elseif($isPreQualified)
                                 <a href="{{ route('student.applications.create', $s->id) }}" class="inline-flex items-center gap-1.5 px-4 py-2 bg-[#7B1113] text-white font-extrabold rounded-xl text-xs hover:bg-[#540B0D] transition shadow-sm shrink-0">
                                     Apply Now &rarr;
                                 </a>
