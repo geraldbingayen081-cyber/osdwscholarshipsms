@@ -25,7 +25,32 @@
                     </div>
                 </div>
 
-                <!-- Document Upload Section -->
+                @php
+                    $eligibilityReqs = $scholarship->requirements->where('requirement_type', 'eligibility');
+                    $documentReqs = $scholarship->requirements->where('requirement_type', 'document');
+                @endphp
+
+                <!-- Eligibility Criteria Checklist (Informational / No file upload needed) -->
+                @if($eligibilityReqs->isNotEmpty())
+                    <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-3">
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider flex items-center gap-2 border-b border-slate-200 pb-2">
+                            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Eligibility Criteria
+                        </h3>
+                        <ul class="space-y-2">
+                            @foreach($eligibilityReqs as $eligReq)
+                                <li class="flex items-start space-x-2 text-xs text-slate-700">
+                                    <span class="text-emerald-600 font-bold mt-0.5">&check;</span>
+                                    <span>{{ $eligReq->requirement_name }}</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <!-- Document Upload Section (Only for Required Submission Documents) -->
                 <div>
                     <h3 class="text-sm font-extrabold text-slate-800 uppercase tracking-wider mb-2 flex items-center gap-2 border-b border-slate-100 pb-3">
                         <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -36,7 +61,7 @@
                     <p class="text-xs text-slate-500 mb-6">Allowed formats: PDF, JPG, JPEG, PNG (Maximum file size: 5MB per file).</p>
 
                     <div class="space-y-6">
-                        @forelse($scholarship->requirements as $docReq)
+                        @forelse($documentReqs as $docReq)
                             <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                                 <label for="doc_{{ $docReq->id }}" class="block text-xs font-bold text-slate-800 mb-1">
                                     {{ $docReq->requirement_name }}

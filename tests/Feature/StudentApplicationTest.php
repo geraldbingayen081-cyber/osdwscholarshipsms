@@ -103,6 +103,13 @@ class StudentApplicationTest extends TestCase
 
     public function test_student_can_submit_scholarship_application_with_documents()
     {
+        $eligReq = ScholarshipRequirement::create([
+            'scholarship_id' => $this->scholarship->id,
+            'requirement_name' => 'Minimum GWA of 1.75 or better',
+            'requirement_type' => 'eligibility',
+            'is_required' => true,
+        ]);
+
         $docReq = ScholarshipRequirement::create([
             'scholarship_id' => $this->scholarship->id,
             'requirement_name' => 'Certificate of Registration',
@@ -112,6 +119,7 @@ class StudentApplicationTest extends TestCase
 
         $file = UploadedFile::fake()->create('cor.pdf', 500, 'application/pdf');
 
+        // Only upload file for docReq, not eligReq
         $response = $this->actingAs($this->studentUser)->post("/student/scholarships/{$this->scholarship->id}/apply", [
             'doc_' . $docReq->id => $file,
         ]);

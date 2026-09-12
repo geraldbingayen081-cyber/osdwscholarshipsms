@@ -72,7 +72,7 @@
 
                     <flux:menu.separator />
 
-                    <form method="POST" action="{{ route('logout') }}" class="w-full">
+                    <form method="POST" action="{{ route('logout') }}" class="w-full" onsubmit="return confirm('Do you want to logout?');">
                         @csrf
                         <flux:menu.item
                             as="button"

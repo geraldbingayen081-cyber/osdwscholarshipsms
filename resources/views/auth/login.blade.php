@@ -56,15 +56,14 @@
                     Password <span class="text-red-500">*</span>
                 </label>
                 <div class="relative rounded-md shadow-xs">
-                    <input 
-                        type="password" 
+                    <x-password-input 
                         name="password" 
                         id="password" 
                         required 
                         autocomplete="current-password"
-                        class="w-full px-4 py-2.5 rounded-lg border @error('password') border-red-500 bg-red-50 dark:bg-red-950/40 @else border-slate-300 dark:border-slate-700 @enderror bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-csu-green focus:border-csu-green text-sm transition"
+                        class="px-4 py-2.5"
                         placeholder="••••••••"
-                    >
+                    />
                 </div>
                 @error('password')
                     <p class="mt-1.5 text-xs text-red-600 dark:text-red-400 font-medium">{{ $message }}</p>

@@ -87,10 +87,13 @@ class ApplicationController extends Controller
                 ->with('error', 'Application submission period is closed.');
         }
 
-        // Validate Document Checklist
-        $documentRequirements = $scholarship->requirements()->where('status', 'active')->get();
+        // Validate Document Checklist (only 'document' requirements require file uploads)
+        $documentRequirements = $scholarship->requirements()
+            ->where('requirement_type', 'document')
+            ->where('status', 'active')
+            ->get();
         if ($documentRequirements->isEmpty()) {
-            $documentRequirements = $scholarship->requirements;
+            $documentRequirements = $scholarship->requirements()->where('requirement_type', 'document')->get();
         }
 
         $rules = [];

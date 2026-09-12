@@ -162,7 +162,7 @@
                 </div>
 
                 <div class="space-y-4">
-                    @forelse($scholarship->requirements as $req)
+                    @forelse($scholarship->requirements->where('requirement_type', 'document') as $req)
                         <div x-data="{ preview: null, fileName: '', fileSize: '' }" class="p-4 rounded-xl border border-slate-200 bg-slate-50/60 space-y-3">
                             <div class="flex items-center justify-between">
                                 <div>

@@ -118,14 +118,14 @@
                         <label for="password" class="block text-xs font-semibold text-slate-700 dark:text-slate-200 mb-1">
                             Password <span class="text-red-500">*</span>
                         </label>
-                        <input 
-                            type="password" 
+                        <x-password-input 
                             name="password" 
                             id="password" 
                             required 
-                            class="w-full px-3 py-2 rounded-lg border @error('password') border-red-500 bg-red-50 dark:bg-red-950/40 @else border-slate-300 dark:border-slate-700 @endif bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm focus:ring-2 focus:ring-csu-green focus:border-csu-green"
+                            autocomplete="new-password"
+                            class="px-3 py-2"
                             placeholder="At least 8 characters"
-                        >
+                        />
                         @error('password')
                             <p class="mt-1 text-xs text-red-600 dark:text-red-400 font-medium">{{ $message }}</p>
                         @enderror
@@ -136,14 +136,14 @@
                         <label for="password_confirmation" class="block text-xs font-semibold text-slate-700 dark:text-slate-200 mb-1">
                             Confirm Password <span class="text-red-500">*</span>
                         </label>
-                        <input 
-                            type="password" 
+                        <x-password-input 
                             name="password_confirmation" 
                             id="password_confirmation" 
                             required 
-                            class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm focus:ring-2 focus:ring-csu-green focus:border-csu-green"
+                            autocomplete="new-password"
+                            class="px-3 py-2"
                             placeholder="Re-enter password"
-                        >
+                        />
                     </div>
                 </div>
             </div>

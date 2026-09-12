@@ -374,10 +374,13 @@
                             <label class="block font-bold text-slate-700 mb-1">
                                 Current Password
                             </label>
-                            <input type="password" 
-                                   name="current_password" 
-                                   placeholder="Enter current password if changing" 
-                                   class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
+                            <x-password-input 
+                                name="current_password" 
+                                id="admin_current_password"
+                                autocomplete="current-password"
+                                placeholder="Enter current password if changing" 
+                                class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none"
+                            />
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -385,20 +388,26 @@
                                 <label class="block font-bold text-slate-700 mb-1">
                                     New Password
                                 </label>
-                                <input type="password" 
-                                       name="new_password" 
-                                       placeholder="New password" 
-                                       class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
+                                <x-password-input 
+                                    name="new_password" 
+                                    id="admin_new_password"
+                                    autocomplete="new-password"
+                                    placeholder="New password" 
+                                    class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none"
+                                />
                             </div>
 
                             <div>
                                 <label class="block font-bold text-slate-700 mb-1">
                                     Confirm New Password
                                 </label>
-                                <input type="password" 
-                                       name="new_password_confirmation" 
-                                       placeholder="Confirm password" 
-                                       class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
+                                <x-password-input 
+                                    name="new_password_confirmation" 
+                                    id="admin_new_password_confirmation"
+                                    autocomplete="new-password"
+                                    placeholder="Confirm password" 
+                                    class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none"
+                                />
                             </div>
                         </div>
                     </div>
