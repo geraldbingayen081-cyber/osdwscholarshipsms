@@ -76,7 +76,7 @@
                 <input type="text" 
                        name="search" 
                        value="{{ $search }}" 
-                       placeholder="Search grantee name, email, or Student ID (e.g. 26-32424)..." 
+                       placeholder="Search grantee name, email, or Student ID (00-00000)..." 
                        {{ $search ? 'autofocus onfocus="this.setSelectionRange(this.value.length, this.value.length)"' : '' }}
                        oninput="clearTimeout(window._searchTimer); window._searchTimer = setTimeout(() => this.form.submit(), 400)"
                        class="w-full py-2 pl-9 pr-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">

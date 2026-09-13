@@ -38,7 +38,9 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
             <div class="flex items-center space-x-4">
                 <button type="button" onclick="toggleTheme()" class="cursor-pointer focus:outline-none rounded-full transition transform active:scale-95">
-                    @if(\App\Models\SystemSetting::logoUrl())
+                    @if(\App\Models\SystemSetting::schoolLogoUrl())
+                        <img src="{{ \App\Models\SystemSetting::schoolLogoUrl() }}" alt="School Logo" class="h-14 w-14 rounded-full object-cover border-2 border-csu-gold shadow-md bg-white shrink-0">
+                    @elseif(\App\Models\SystemSetting::logoUrl())
                         <img src="{{ \App\Models\SystemSetting::logoUrl() }}" alt="Logo" class="h-14 w-14 rounded-full object-cover border-2 border-csu-gold shadow-md bg-white shrink-0">
                     @else
                         <x-csu-logo class="h-14 w-14 rounded-full shadow-md shrink-0 border-2 border-csu-gold" />

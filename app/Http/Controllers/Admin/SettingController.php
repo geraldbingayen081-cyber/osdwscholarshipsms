@@ -95,8 +95,10 @@ class SettingController extends Controller
             'contact_email' => ['nullable', 'email', 'max:255'],
             'contact_phone' => ['nullable', 'string', 'max:50'],
             'address' => ['nullable', 'string', 'max:500'],
-            'system_logo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,svg', 'max:5120'], // Max 5MB per user specification
+            'school_logo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,svg', 'max:5120'], // Max 5MB
+            'system_logo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,svg', 'max:5120'], // Max 5MB
         ], [
+            'school_logo.max' => 'The school logo must not be greater than 5MB.',
             'system_logo.max' => 'The system logo must not be greater than 5MB.',
         ]);
 
@@ -110,8 +112,28 @@ class SettingController extends Controller
         SystemSetting::set('contact_phone', $validated['contact_phone'] ?? '');
         SystemSetting::set('address', $validated['address'] ?? '');
 
-        // Handle Logo Reset to Default
-        if ($request->boolean('reset_logo')) {
+        // Handle School Logo Reset
+        if ($request->boolean('reset_school_logo')) {
+            $existingPath = SystemSetting::get('school_logo_path');
+            if ($existingPath && Storage::disk('public')->exists($existingPath)) {
+                Storage::disk('public')->delete($existingPath);
+            }
+            SystemSetting::set('school_logo_path', null);
+        }
+
+        // Handle Custom School Logo Upload
+        if ($request->hasFile('school_logo')) {
+            $existingPath = SystemSetting::get('school_logo_path');
+            if ($existingPath && Storage::disk('public')->exists($existingPath)) {
+                Storage::disk('public')->delete($existingPath);
+            }
+
+            $path = $request->file('school_logo')->store('system', 'public');
+            SystemSetting::set('school_logo_path', $path);
+        }
+
+        // Handle System/OSDW Logo Reset
+        if ($request->boolean('reset_logo') || $request->boolean('reset_system_logo')) {
             $existingPath = SystemSetting::get('system_logo_path');
             if ($existingPath && Storage::disk('public')->exists($existingPath)) {
                 Storage::disk('public')->delete($existingPath);
@@ -119,7 +141,7 @@ class SettingController extends Controller
             SystemSetting::set('system_logo_path', null);
         }
 
-        // Handle Custom Logo Upload
+        // Handle Custom System/OSDW Logo Upload
         if ($request->hasFile('system_logo')) {
             $existingPath = SystemSetting::get('system_logo_path');
             if ($existingPath && Storage::disk('public')->exists($existingPath)) {

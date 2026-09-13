@@ -65,7 +65,82 @@
                 <form method="POST" action="{{ route('admin.settings.update-system') }}" enctype="multipart/form-data" class="space-y-5">
                     @csrf
 
-                    <!-- System Logo Uploader with Live Preview -->
+                    <!-- 1. School / University Logo Uploader with Live Preview -->
+                    <div x-data="{ 
+                            schoolLogoPreview: '{{ \App\Models\SystemSetting::schoolLogoUrl() }}',
+                            resetSchoolFlag: false,
+                            schoolFileChosen(event) {
+                                const file = event.target.files[0];
+                                if (!file) return;
+                                const reader = new FileReader();
+                                reader.onload = (e) => { this.schoolLogoPreview = e.target.result; this.resetSchoolFlag = false; };
+                                reader.readAsDataURL(file);
+                            },
+                            triggerSchoolReset() {
+                                this.schoolLogoPreview = null;
+                                this.resetSchoolFlag = true;
+                                if ($refs.schoolLogoInput) $refs.schoolLogoInput.value = '';
+                            }
+                         }" 
+                         class="bg-slate-50/80 p-5 rounded-2xl border border-slate-200 space-y-3">
+                        
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-800">
+                                    School / University Logo <span class="text-[#6B0F1A] font-extrabold">(School Logo)</span>
+                                </label>
+                                <p class="text-[11px] text-slate-500">
+                                    Displayed beside "CAGAYAN STATE UNIVERSITY • Lal-lo Campus" in the sidebar and top header (Max 5MB).
+                                </p>
+                            </div>
+                            <span class="text-[10px] font-bold text-[#6B0F1A] bg-amber-100 px-2 py-0.5 rounded-md border border-amber-300">
+                                School Logo
+                            </span>
+                        </div>
+
+                        <input type="hidden" name="reset_school_logo" :value="resetSchoolFlag ? '1' : '0'">
+
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-5 pt-2">
+                            <!-- School Logo Preview Display Box (Circular) -->
+                            <div class="h-20 w-20 rounded-full bg-[#3B060F] border-2 border-[#FFC107] flex items-center justify-center p-1.5 shrink-0 shadow-md relative overflow-hidden group">
+                                <template x-if="schoolLogoPreview">
+                                    <img :src="schoolLogoPreview" alt="School Logo" class="h-full w-full rounded-full object-cover">
+                                </template>
+                                <template x-if="!schoolLogoPreview">
+                                    <x-csu-logo class="h-full w-full rounded-full" />
+                                </template>
+                            </div>
+
+                            <!-- Upload Controls -->
+                            <div class="space-y-2 flex-1">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <label class="cursor-pointer px-3.5 py-2 bg-[#3B060F] text-white hover:bg-[#6B0F1A] font-extrabold text-xs rounded-xl transition shadow-xs inline-flex items-center gap-1.5">
+                                        <svg class="w-4 h-4 text-[#FFC107]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                                        </svg>
+                                        <span>Upload School Logo</span>
+                                        <input type="file" 
+                                               name="school_logo" 
+                                               x-ref="schoolLogoInput" 
+                                               @change="schoolFileChosen" 
+                                               accept="image/png,image/jpeg,image/webp,image/svg+xml" 
+                                               class="hidden">
+                                    </label>
+
+                                    <button type="button" 
+                                            @click="triggerSchoolReset" 
+                                            class="px-3 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs rounded-xl transition cursor-pointer">
+                                        Use Default CSU Seal
+                                    </button>
+                                </div>
+                                <p class="text-[10px] text-slate-400">
+                                    Recommended: Official CSU University seal image with transparent or circular background.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. OSDW / System Logo Uploader with Live Preview -->
                     <div x-data="{ 
                             logoPreview: '{{ \App\Models\SystemSetting::logoUrl() }}',
                             resetFlag: false,
@@ -87,14 +162,14 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <label class="block text-xs font-bold text-slate-800">
-                                    Official System Logo
+                                    Office of Student Development & Welfare (OSDW) / System Logo
                                 </label>
                                 <p class="text-[11px] text-slate-500">
-                                    Displayed in sidebar navigation, headers, and reports (Max 5MB • PNG, JPG, WEBP, SVG).
+                                    Displayed in login cards, reports, and scholarship portal branding (Max 5MB • PNG, JPG, WEBP, SVG).
                                 </p>
                             </div>
                             <span class="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-md">
-                                Max 5MB
+                                OSDW Logo
                             </span>
                         </div>
 
@@ -118,7 +193,7 @@
                                         <svg class="w-4 h-4 text-[#FFC107]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                                         </svg>
-                                        <span>Upload New Logo</span>
+                                        <span>Upload OSDW Logo</span>
                                         <input type="file" 
                                                name="system_logo" 
                                                x-ref="logoInput" 
@@ -134,7 +209,7 @@
                                     </button>
                                 </div>
                                 <p class="text-[10px] text-slate-400">
-                                    Recommended: Transparent PNG or high-resolution vector format for best clarity on dark backgrounds.
+                                    Recommended: OSDW emblem or scholarship office logo with transparent background.
                                 </p>
                             </div>
                         </div>

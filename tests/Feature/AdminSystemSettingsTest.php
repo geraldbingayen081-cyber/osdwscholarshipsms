@@ -144,6 +144,52 @@ test('admin can update system branding and upload custom logo up to 5MB', functi
     expect(SystemSetting::logoUrl())->toBeNull();
 });
 
+test('admin can upload and reset separate school logo', function () {
+    Storage::fake('public');
+
+    $admin = User::create([
+        'first_name' => 'Admin',
+        'last_name' => 'User',
+        'email' => 'admin.schoollogo@csu.edu.ph',
+        'password' => bcrypt('password123'),
+        'role' => 'admin',
+    ]);
+
+    $schoolLogo = UploadedFile::fake()->image('csu_school_seal.png', 400, 400)->size(3500); // 3.5MB
+
+    $response = $this->actingAs($admin)->post(route('admin.settings.update-system'), [
+        'system_name' => 'OSDW Scholarship Management System',
+        'institution_name' => 'Cagayan State University',
+        'campus_name' => 'Lal-lo Campus',
+        'office_name' => 'Office of Student Development & Welfare',
+        'school_logo' => $schoolLogo,
+    ]);
+
+    $response->assertRedirect(route('admin.settings.index'));
+    $response->assertSessionHas('success');
+
+    expect(SystemSetting::schoolLogoUrl())->not->toBeNull();
+    $schoolLogoPath = SystemSetting::get('school_logo_path');
+    Storage::disk('public')->assertExists($schoolLogoPath);
+
+    // Verify school logo is displayed in guest banner
+    $resGuest = $this->get(route('login'));
+    $resGuest->assertSee(SystemSetting::schoolLogoUrl(), false);
+
+    // Test resetting school logo back to default CSU seal
+    $resetResponse = $this->actingAs($admin)->post(route('admin.settings.update-system'), [
+        'system_name' => 'OSDW Scholarship Management System',
+        'institution_name' => 'Cagayan State University',
+        'campus_name' => 'Lal-lo Campus',
+        'office_name' => 'Office of Student Development & Welfare',
+        'reset_school_logo' => '1',
+    ]);
+
+    $resetResponse->assertRedirect(route('admin.settings.index'));
+    expect(SystemSetting::get('school_logo_path'))->toBeNull();
+    expect(SystemSetting::schoolLogoUrl())->toBeNull();
+});
+
 test('login page dynamically displays uploaded system logo in circular format', function () {
     Storage::fake('public');
 

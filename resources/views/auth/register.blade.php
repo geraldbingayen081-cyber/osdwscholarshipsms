@@ -9,7 +9,9 @@
                 class="mb-3 cursor-pointer focus:outline-none rounded-full transition transform active:scale-95"
             >
                 @if(\App\Models\SystemSetting::logoUrl())
-                    <img src="{{ \App\Models\SystemSetting::logoUrl() }}" alt="Logo" class="h-16 w-16 rounded-full object-cover border-2 border-csu-gold shadow-lg bg-white p-0.5">
+                    <img src="{{ \App\Models\SystemSetting::logoUrl() }}" alt="System Logo" class="h-16 w-16 rounded-full object-cover border-2 border-csu-gold shadow-lg bg-white p-0.5">
+                @elseif(\App\Models\SystemSetting::schoolLogoUrl())
+                    <img src="{{ \App\Models\SystemSetting::schoolLogoUrl() }}" alt="School Logo" class="h-16 w-16 rounded-full object-cover border-2 border-csu-gold shadow-lg bg-white p-0.5">
                 @else
                     <x-csu-logo class="h-16 w-16 rounded-full shadow-lg border-2 border-csu-gold" />
                 @endif

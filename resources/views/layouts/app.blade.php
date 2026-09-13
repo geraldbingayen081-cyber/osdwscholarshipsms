@@ -56,7 +56,9 @@
                 <div class="flex items-center space-x-3">
                     <!-- Hidden Dark Mode Toggle on Sidebar Logo Click -->
                     <button type="button" onclick="toggleTheme()" class="cursor-pointer focus:outline-none rounded-full transition transform active:scale-95 shrink-0">
-                        @if(\App\Models\SystemSetting::logoUrl())
+                        @if(\App\Models\SystemSetting::schoolLogoUrl())
+                            <img src="{{ \App\Models\SystemSetting::schoolLogoUrl() }}" alt="School Logo" class="h-10 w-10 rounded-full object-cover shrink-0 border border-white/20 shadow-xs bg-white">
+                        @elseif(\App\Models\SystemSetting::logoUrl())
                             <img src="{{ \App\Models\SystemSetting::logoUrl() }}" alt="Logo" class="h-10 w-10 rounded-full object-cover shrink-0 border border-white/20 shadow-xs bg-white">
                         @else
                             <x-csu-logo class="h-10 w-10 rounded-full shrink-0 shadow-xs" />

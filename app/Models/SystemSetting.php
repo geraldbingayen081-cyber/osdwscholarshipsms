@@ -65,4 +65,17 @@ class SystemSetting extends Model
 
         return null;
     }
+
+    /**
+     * Get the public URL of the custom school / university logo, or null if using default vector seal.
+     */
+    public static function schoolLogoUrl(): ?string
+    {
+        $path = static::get('school_logo_path');
+        if ($path && Storage::disk('public')->exists($path)) {
+            return asset('storage/' . $path);
+        }
+
+        return null;
+    }
 }
