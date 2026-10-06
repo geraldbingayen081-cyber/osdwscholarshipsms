@@ -90,7 +90,7 @@
                                     School / University Logo <span class="text-[#6B0F1A] font-extrabold">(School Logo)</span>
                                 </label>
                                 <p class="text-[11px] text-slate-500">
-                                    Displayed beside "CAGAYAN STATE UNIVERSITY • Lal-lo Campus" in the sidebar and top header (Max 5MB).
+                                    Max 5MB (PNG, JPG, WEBP, SVG).
                                 </p>
                             </div>
                             <span class="text-[10px] font-bold text-[#6B0F1A] bg-amber-100 px-2 py-0.5 rounded-md border border-amber-300">
@@ -165,7 +165,7 @@
                                     Office of Student Development & Welfare (OSDW) / System Logo
                                 </label>
                                 <p class="text-[11px] text-slate-500">
-                                    Displayed in login cards, reports, and scholarship portal branding (Max 5MB • PNG, JPG, WEBP, SVG).
+                                    Max 5MB (PNG, JPG, WEBP, SVG).
                                 </p>
                             </div>
                             <span class="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-md">
@@ -209,7 +209,7 @@
                                     </button>
                                 </div>
                                 <p class="text-[10px] text-slate-400">
-                                    Recommended: OSDW emblem or scholarship office logo with transparent background.
+                                    Recommended: OSDW office logo with transparent background.
                                 </p>
                             </div>
                         </div>

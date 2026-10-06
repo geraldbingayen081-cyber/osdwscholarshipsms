@@ -47,27 +47,27 @@
         @endif
 
         {{-- Page Header & Tab Controls --}}
-        <div class="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div class="flex items-center space-x-4">
                 <div class="h-12 w-12 rounded-xl bg-[#7B1113] text-[#FFC107] flex items-center justify-center shrink-0 shadow-sm">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
                 </div>
                 <div>
-                    <h1 class="text-xl sm:text-2xl font-extrabold text-[#3B060F] tracking-tight">Grantee Renewals & Requirements</h1>
-                    <p class="text-xs text-slate-500 font-medium mt-0.5">Configure semester renewal document requirements and verify grantee submissions.</p>
+                    <h1 class="text-xl sm:text-2xl font-extrabold text-[#3B060F] dark:text-white tracking-tight">Grantee Renewals & Requirements</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">Configure semester renewal document requirements and verify grantee submissions.</p>
                 </div>
             </div>
 
             {{-- 2-Tab Navigation Controls --}}
-            <div class="flex items-center bg-slate-100 p-1.5 rounded-2xl border border-slate-200 shrink-0 text-xs font-extrabold">
+            <div class="flex items-center bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 shrink-0 text-xs font-extrabold">
                 <button type="button" @click="activeTab = 'requests'"
-                        :class="activeTab === 'requests' ? 'bg-white text-[#7B1113] shadow-xs' : 'text-slate-600 hover:text-slate-900'"
+                        :class="activeTab === 'requests' ? 'bg-white dark:bg-slate-900 text-[#7B1113] dark:text-[#FFC107] shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
                         class="px-4 py-2 rounded-xl transition flex items-center gap-2 cursor-pointer">
                     <span>📋 Program Requirements</span>
-                    <span class="px-2 py-0.5 rounded-full text-[10px] bg-slate-200 text-slate-800" x-text="'{{ $scholarships->count() }}'"></span>
+                    <span class="px-2 py-0.5 rounded-full text-[10px] bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200" x-text="'{{ $scholarships->count() }}'"></span>
                 </button>
                 <button type="button" @click="activeTab = 'submissions'"
-                        :class="activeTab === 'submissions' ? 'bg-white text-[#7B1113] shadow-xs' : 'text-slate-600 hover:text-slate-900'"
+                        :class="activeTab === 'submissions' ? 'bg-white dark:bg-slate-900 text-[#7B1113] dark:text-[#FFC107] shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
                         class="px-4 py-2 rounded-xl transition flex items-center gap-2 cursor-pointer">
                     <span>📥 Submissions Queue</span>
                     @php
@@ -76,7 +76,7 @@
                     @if($pendingCount > 0)
                         <span class="px-2 py-0.5 rounded-full text-[10px] bg-amber-500 text-white font-black animate-pulse">{{ $pendingCount }}</span>
                     @else
-                        <span class="px-2 py-0.5 rounded-full text-[10px] bg-slate-200 text-slate-800">{{ $submittedRenewals->count() }}</span>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200">{{ $submittedRenewals->count() }}</span>
                     @endif
                 </button>
             </div>
@@ -84,19 +84,19 @@
 
         {{-- TAB 1: Program Requirement Checklists & Dispatch --}}
         <div x-show="activeTab === 'requests'" x-transition class="space-y-6">
-            <div class="bg-white border border-slate-200 rounded-2xl shadow-xs overflow-hidden">
-                <div class="px-5 py-4 border-b border-slate-200 bg-slate-50/70 flex items-center justify-between">
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xs overflow-hidden">
+                <div class="px-5 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/40 flex items-center justify-between">
                     <div>
-                        <h2 class="text-sm font-extrabold text-[#3B060F] uppercase tracking-wider">Scholarship Program Checklists</h2>
-                        <p class="text-xs text-slate-500">Configure renewal requirements and view active requirement status per program.</p>
+                        <h2 class="text-sm font-extrabold text-[#3B060F] dark:text-white uppercase tracking-wider">Scholarship Program Checklists</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Configure renewal requirements and view active requirement status per program.</p>
                     </div>
-                    <span class="text-xs font-semibold text-slate-600 bg-white px-3 py-1.5 rounded-xl border border-slate-200">
+                    <span class="text-xs font-semibold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700">
                         {{ $scholarships->count() }} {{ Str::plural('Program', $scholarships->count()) }}
                     </span>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs text-slate-700">
-                        <thead class="bg-slate-100/80 text-slate-700 font-extrabold uppercase tracking-wider text-[10px] border-b border-slate-200">
+                    <table class="w-full text-left text-xs text-slate-700 dark:text-slate-300">
+                        <thead class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-extrabold uppercase tracking-wider text-[10px] border-b border-slate-200 dark:border-slate-700">
                             <tr>
                                 <th class="py-3.5 px-4 sm:px-6">School Year</th>
                                 <th class="py-3.5 px-4">Scholarship Program</th>
@@ -106,32 +106,32 @@
                                 <th class="py-3.5 px-4">Active Requirements</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-100 bg-white">
+                        <tbody class="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900">
                             @forelse($scholarships as $scholarship)
-                            <tr class="hover:bg-slate-50/70 transition align-top">
-                                <td class="py-3.5 px-4 sm:px-6 font-extrabold text-slate-900 whitespace-nowrap">
+                            <tr class="hover:bg-slate-50/70 dark:hover:bg-slate-800/60 transition align-top">
+                                <td class="py-3.5 px-4 sm:px-6 font-extrabold text-slate-900 dark:text-white whitespace-nowrap">
                                     {{ $scholarship->school_year ?? $scholarship->school_year_label ?? '-' }}
                                 </td>
                                 <td class="py-3.5 px-4">
-                                    <div class="font-bold text-slate-900">{{ $scholarship->name }}</div>
-                                    <div class="text-[11px] text-slate-400 mt-0.5">{{ $scholarship->provider ?? 'CSU OSDW' }}</div>
+                                    <div class="font-bold text-slate-900 dark:text-white">{{ $scholarship->name }}</div>
+                                    <div class="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">{{ $scholarship->provider ?? 'CSU OSDW' }}</div>
                                 </td>
                                 <td class="py-3.5 px-4 text-center">
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-extrabold bg-slate-100 text-slate-800 border border-slate-200">{{ $scholarship->total_grantees }}</span>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-extrabold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700">{{ $scholarship->total_grantees }}</span>
                                 </td>
                                 <td class="py-3.5 px-4 text-center">
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-extrabold bg-emerald-50 text-emerald-800 border border-emerald-200">{{ $scholarship->total_approved }}</span>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-extrabold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">{{ $scholarship->total_approved }}</span>
                                 </td>
                                 <td class="py-3.5 px-4 text-center">
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-extrabold bg-amber-50 text-amber-800 border border-amber-200">{{ $scholarship->total_resubmit }}</span>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-extrabold bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800">{{ $scholarship->total_resubmit }}</span>
                                 </td>
                                 <td class="py-3.5 px-4 max-w-xs">
                                     @if($scholarship->active_requirements->isEmpty())
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-100 text-slate-400 border border-slate-200">None Configured</span>
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700">None Configured</span>
                                     @else
                                         <div class="flex flex-wrap gap-1.5">
                                         @foreach($scholarship->active_requirements as $req)
-                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
                                                 {{ $req->requirement_name }}{{ ($req->semester && $req->school_year) ? ' ('.$req->semester.')' : '' }}
                                             </span>
@@ -141,7 +141,7 @@
                                 </td>
                             </tr>
                             @empty
-                            <tr><td colspan="6" class="py-10 text-center text-slate-400 text-xs">No scholarship programs found. <a href="{{ route('admin.scholarships.create') }}" class="text-[#7B1113] font-bold underline">Create one</a>.</td></tr>
+                            <tr><td colspan="6" class="py-10 text-center text-slate-400 dark:text-slate-500 text-xs">No scholarship programs found. <a href="{{ route('admin.scholarships.create') }}" class="text-[#7B1113] dark:text-[#FFC107] font-bold underline">Create one</a>.</td></tr>
                             @endforelse
                         </tbody>
                     </table>
@@ -151,25 +151,25 @@
 
         {{-- TAB 2: Grantee Submissions & Verification Queue --}}
         <div x-show="activeTab === 'submissions'" x-transition class="space-y-6">
-            <div class="bg-white border border-slate-200 rounded-2xl shadow-xs overflow-hidden">
-                <div class="px-5 py-4 border-b border-slate-200 bg-slate-50/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xs overflow-hidden">
+                <div class="px-5 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
-                        <h2 class="text-sm font-extrabold text-[#3B060F] uppercase tracking-wider">Grantee Submissions & Verification Queue</h2>
-                        <p class="text-xs text-slate-500">Inspect uploaded student documents, verify eligibility, or request resubmission.</p>
+                        <h2 class="text-sm font-extrabold text-[#3B060F] dark:text-white uppercase tracking-wider">Grantee Submissions & Verification Queue</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Inspect uploaded student documents, verify eligibility, or request resubmission.</p>
                     </div>
 
                     {{-- Filter Sub-Tabs --}}
-                    <div class="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200 text-xs font-bold">
-                        <button type="button" @click="submissionFilter = 'all'" :class="submissionFilter === 'all' ? 'bg-[#3B060F] text-white' : 'text-slate-600 hover:bg-slate-100'" class="px-3 py-1 rounded-lg transition">All ({{ $submittedRenewals->count() }})</button>
-                        <button type="button" @click="submissionFilter = 'pending'" :class="submissionFilter === 'pending' ? 'bg-amber-600 text-white' : 'text-slate-600 hover:bg-slate-100'" class="px-3 py-1 rounded-lg transition">Pending ({{ $submittedRenewals->where('status', 'pending')->count() }})</button>
-                        <button type="button" @click="submissionFilter = 'verified'" :class="submissionFilter === 'verified' ? 'bg-emerald-600 text-white' : 'text-slate-600 hover:bg-slate-100'" class="px-3 py-1 rounded-lg transition">Verified ({{ $submittedRenewals->where('status', 'verified')->count() }})</button>
-                        <button type="button" @click="submissionFilter = 'needs_resubmission'" :class="submissionFilter === 'needs_resubmission' ? 'bg-rose-600 text-white' : 'text-slate-600 hover:bg-slate-100'" class="px-3 py-1 rounded-lg transition">Deficient ({{ $submittedRenewals->where('status', 'needs_resubmission')->count() }})</button>
+                    <div class="flex items-center gap-1 bg-white dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold">
+                        <button type="button" @click="submissionFilter = 'all'" :class="submissionFilter === 'all' ? 'bg-[#3B060F] text-white' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'" class="px-3 py-1 rounded-lg transition">All ({{ $submittedRenewals->count() }})</button>
+                        <button type="button" @click="submissionFilter = 'pending'" :class="submissionFilter === 'pending' ? 'bg-amber-600 text-white' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'" class="px-3 py-1 rounded-lg transition">Pending ({{ $submittedRenewals->where('status', 'pending')->count() }})</button>
+                        <button type="button" @click="submissionFilter = 'verified'" :class="submissionFilter === 'verified' ? 'bg-emerald-600 text-white' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'" class="px-3 py-1 rounded-lg transition">Verified ({{ $submittedRenewals->where('status', 'verified')->count() }})</button>
+                        <button type="button" @click="submissionFilter = 'needs_resubmission'" :class="submissionFilter === 'needs_resubmission' ? 'bg-rose-600 text-white' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'" class="px-3 py-1 rounded-lg transition">Deficient ({{ $submittedRenewals->where('status', 'needs_resubmission')->count() }})</button>
                     </div>
                 </div>
 
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs text-slate-700">
-                        <thead class="bg-slate-100/80 text-slate-700 font-extrabold uppercase tracking-wider text-[10px] border-b border-slate-200">
+                    <table class="w-full text-left text-xs text-slate-700 dark:text-slate-300">
+                        <thead class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-extrabold uppercase tracking-wider text-[10px] border-b border-slate-200 dark:border-slate-700">
                             <tr>
                                 <th class="py-3.5 px-4 sm:px-6">Student Info</th>
                                 <th class="py-3.5 px-4">Scholarship Program</th>
@@ -179,32 +179,32 @@
                                 <th class="py-3.5 px-4 text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-100 bg-white">
+                        <tbody class="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900">
                             @forelse($submittedRenewals as $ren)
-                            <tr x-show="submissionFilter === 'all' || submissionFilter === '{{ $ren->status }}'" class="hover:bg-slate-50/70 transition align-middle">
+                            <tr x-show="submissionFilter === 'all' || submissionFilter === '{{ $ren->status }}'" class="hover:bg-slate-50/70 dark:hover:bg-slate-800/60 transition align-middle">
                                 <td class="py-3.5 px-4 sm:px-6">
-                                    <div class="font-extrabold text-slate-900">{{ $ren->scholar->student->user->full_name ?? 'Student' }}</div>
-                                    <div class="text-[11px] text-slate-400 font-mono mt-0.5">{{ $ren->scholar->student->student_number ?? 'N/A' }} • {{ $ren->scholar->student->course ?? '' }}</div>
+                                    <div class="font-extrabold text-slate-900 dark:text-white">{{ $ren->scholar->student->user->full_name ?? 'Student' }}</div>
+                                    <div class="text-[11px] text-slate-400 dark:text-slate-500 font-mono mt-0.5">{{ $ren->scholar->student->student_number ?? 'N/A' }} • {{ $ren->scholar->student->course ?? '' }}</div>
                                 </td>
                                 <td class="py-3.5 px-4">
-                                    <div class="font-bold text-slate-900">{{ $ren->scholar->scholarship->name ?? 'Scholarship' }}</div>
-                                    <div class="text-[11px] text-slate-400 mt-0.5">{{ $ren->scholar->scholarship->provider ?? 'CSU OSDW' }}</div>
+                                    <div class="font-bold text-slate-900 dark:text-white">{{ $ren->scholar->scholarship->name ?? 'Scholarship' }}</div>
+                                    <div class="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">{{ $ren->scholar->scholarship->provider ?? 'CSU OSDW' }}</div>
                                 </td>
                                 <td class="py-3.5 px-4">
-                                    <span class="font-bold text-slate-800 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">
+                                    <span class="font-bold text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700">
                                         {{ $ren->requirement_type ?? 'Renewal Requirement' }}
                                     </span>
                                 </td>
-                                <td class="py-3.5 px-4 text-slate-500 font-medium">
+                                <td class="py-3.5 px-4 text-slate-500 dark:text-slate-400 font-medium">
                                     {{ $ren->submitted_at ? $ren->submitted_at->format('M d, Y') : $ren->created_at->format('M d, Y') }}
                                 </td>
                                 <td class="py-3.5 px-4 text-center">
                                     @if($ren->status === 'verified')
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300">Verified & Approved</span>
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800">Verified & Approved</span>
                                     @elseif($ren->status === 'needs_resubmission')
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-rose-100 text-rose-800 border border-rose-300">Needs Resubmission</span>
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-rose-100 text-rose-800 border border-rose-300 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-800">Needs Resubmission</span>
                                     @else
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-amber-100 text-amber-900 border border-amber-300 animate-pulse">Pending Review</span>
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-amber-100 text-amber-900 border border-amber-300 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800 animate-pulse">Pending Review</span>
                                     @endif
                                 </td>
                                 <td class="py-3.5 px-4 text-right">
@@ -237,7 +237,7 @@
                                 </td>
                             </tr>
                             @empty
-                            <tr><td colspan="6" class="py-10 text-center text-slate-400 text-xs">No renewal document submissions recorded yet.</td></tr>
+                            <tr><td colspan="6" class="py-10 text-center text-slate-400 dark:text-slate-500 text-xs">No renewal document submissions recorded yet.</td></tr>
                             @endforelse
                         </tbody>
                     </table>

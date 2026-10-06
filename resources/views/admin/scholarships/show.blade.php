@@ -239,6 +239,7 @@
                                 class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs focus:ring-csu-green focus:border-csu-green"
                             >
                                 <option value="">-- Choose Document Preset --</option>
+                                <option value="Application Form">Application Form </option>
                                 <option value="Certificate of Enrollment (COE)">Certificate of Enrollment (COE)</option>
                                 <option value="Certificate of Registration (COR)">Certificate of Registration (COR)</option>
                                 <option value="Certificate of Grades (COG)">Certificate of Grades (COG)</option>

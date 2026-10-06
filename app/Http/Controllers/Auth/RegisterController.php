@@ -100,6 +100,19 @@ class RegisterController extends Controller
 
         Auth::login($user);
 
+        \App\Models\SystemLog::record(
+            'Authentication',
+            'register',
+            "New student account registered: {$user->full_name} ({$validated['student_number']}) - {$validated['course']}.",
+            $user,
+            [
+                'student_number' => $validated['student_number'],
+                'course' => $validated['course'],
+                'year_level' => $validated['year_level'],
+            ],
+            $user
+        );
+
         return redirect()->route('student.dashboard')->with('success', 'Welcome to CSU–Lal-lo Scholarship Management System! Your account has been registered successfully.');
     }
 }

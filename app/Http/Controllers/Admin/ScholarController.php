@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Scholar;
 use App\Models\ScholarRenewal;
 use App\Models\Scholarship;
+use App\Models\Student;
+use App\Models\SystemLog;
 use App\Notifications\ScholarStatusUpdated;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -62,8 +65,68 @@ class ScholarController extends Controller
         ];
 
         $scholarships = Scholarship::with('academicYear')->orderBy('name')->get();
+        $students = Student::with('user')->get()->sortBy(fn($s) => $s->user?->last_name ?? $s->student_number)->values();
 
-        return view('admin.scholars.index', compact('scholars', 'stats', 'scholarships', 'status', 'scholarshipId', 'search'));
+        return view('admin.scholars.index', compact('scholars', 'stats', 'scholarships', 'students', 'status', 'scholarshipId', 'search'));
+    }
+
+    /**
+     * Directly enroll a student as a scholar grantee without requiring an application.
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'student_id' => ['required', 'exists:students,id'],
+            'scholarship_id' => ['required', 'exists:scholarships,id'],
+            'status' => ['required', Rule::in(['active', 'for_renewal', 'completed'])],
+            'approved_at' => ['nullable', 'date'],
+            'remarks' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $student = Student::with('user')->findOrFail($validated['student_id']);
+        $scholarship = Scholarship::with('academicYear')->findOrFail($validated['scholarship_id']);
+
+        // Prevent duplicate scholar entry for the same student and scholarship
+        $existingScholar = Scholar::where('student_id', $student->id)
+            ->where('scholarship_id', $scholarship->id)
+            ->first();
+
+        if ($existingScholar) {
+            return back()->withInput()->with('error', "Student {$student->user->full_name} is already registered as a grantee for {$scholarship->name} (Status: " . ucfirst(str_replace('_', ' ', $existingScholar->status)) . ").");
+        }
+
+        $approvedAt = !empty($validated['approved_at']) ? Carbon::parse($validated['approved_at']) : now();
+
+        $scholar = Scholar::create([
+            'student_id' => $student->id,
+            'scholarship_id' => $scholarship->id,
+            'application_id' => null,
+            'status' => $validated['status'],
+            'approved_at' => $approvedAt,
+        ]);
+
+        // Audit Trail in SystemLog
+        SystemLog::record(
+            'Scholar',
+            'direct_grantee_enrolled',
+            "Directly enrolled student {$student->user->full_name} ({$student->student_number}) into scholarship '{$scholarship->name}' with status " . ucfirst(str_replace('_', ' ', $scholar->status)) . (!empty($validated['remarks']) ? ". Remarks: {$validated['remarks']}" : "."),
+            $scholar,
+            [
+                'student_id' => $student->id,
+                'scholarship_id' => $scholarship->id,
+                'status' => $scholar->status,
+                'approved_at' => $scholar->approved_at,
+                'remarks' => $validated['remarks'] ?? null,
+            ]
+        );
+
+        // Notify Student User
+        if ($student->user) {
+            $student->user->notify(new ScholarStatusUpdated($scholar));
+        }
+
+        return redirect()->route('admin.scholars.index')
+            ->with('success', "Grantee {$student->user->full_name} was successfully enrolled into {$scholarship->name}!");
     }
 
     /**

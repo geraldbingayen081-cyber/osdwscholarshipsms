@@ -3,15 +3,15 @@
     <!-- Header Section -->
     <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Registered Students Roster</h1>
-            <p class="text-xs text-slate-500 font-medium mt-1">
+            <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Registered Students Roster</h1>
+            <p class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">
                 View and manage student profiles registered on the CSU Lal-lo OSDW Scholarship Portal.
             </p>
         </div>
     </div>
 
     <!-- Filters & Search Bar -->
-    <div class="bg-white rounded-2xl shadow-xs border border-slate-200 p-4 mb-6">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-200 dark:border-slate-800 p-4 mb-6">
         <form method="GET" action="{{ route('admin.students.index') }}" class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
             <!-- Search Input -->
             <div class="sm:col-span-7 relative">
@@ -26,12 +26,12 @@
                        placeholder="Search student name, email, or Student ID (e.g. 26-32424)..." 
                        {{ $search ? 'autofocus onfocus="this.setSelectionRange(this.value.length, this.value.length)"' : '' }}
                        oninput="clearTimeout(window._searchTimer); window._searchTimer = setTimeout(() => this.form.submit(), 400)"
-                       class="w-full py-2 pl-9 pr-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
+                       class="w-full py-2 pl-9 pr-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
             </div>
 
             <!-- Course Select Filter -->
             <div class="sm:col-span-5 flex items-center gap-2">
-                <select name="course" onchange="this.form.submit()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 font-semibold focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
+                <select name="course" onchange="this.form.submit()" class="w-full py-2 px-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-700 dark:text-slate-200 font-semibold focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
                     <option value="">All Degree Courses</option>
                     @foreach($courses as $c)
                         <option value="{{ $c }}" {{ $course === $c ? 'selected' : '' }}>
@@ -40,17 +40,17 @@
                     @endforeach
                 </select>
                 @if($search || $course)
-                    <a href="{{ route('admin.students.index') }}" class="px-2.5 py-1.5 text-xs font-bold text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition shrink-0" title="Reset Filters">Reset</a>
+                    <a href="{{ route('admin.students.index') }}" class="px-2.5 py-1.5 text-xs font-bold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition shrink-0" title="Reset Filters">Reset</a>
                 @endif
             </div>
         </form>
     </div>
 
     <!-- Students Data Table -->
-    <div class="bg-white rounded-2xl shadow-xs border border-slate-200 overflow-hidden">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-200 dark:border-slate-800 overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs text-slate-600">
-                <thead class="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase border-b border-slate-200">
+            <table class="w-full text-left text-xs text-slate-600 dark:text-slate-300">
+                <thead class="bg-slate-100 dark:bg-slate-800 text-[11px] font-bold text-slate-700 dark:text-slate-200 uppercase border-b border-slate-200 dark:border-slate-700">
                     <tr>
                         <th class="px-6 py-3.5">Student Name</th>
                         <th class="px-6 py-3.5">Student ID</th>
@@ -60,9 +60,9 @@
                         <th class="px-6 py-3.5 text-right">Action</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-200">
+                <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
                     @forelse($students as $student)
-                        <tr class="hover:bg-slate-50 transition">
+                        <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/60 transition">
                             <td class="px-6 py-4">
                                 <div class="flex items-center space-x-3">
                                     @if($student->user->profile_photo_url)
@@ -73,31 +73,31 @@
                                         </div>
                                     @endif
                                     <div>
-                                        <div class="font-bold text-slate-900 text-sm">
+                                        <div class="font-bold text-slate-900 dark:text-white text-sm">
                                             {{ $student->user->full_name }}
                                         </div>
-                                        <div class="text-[11px] text-slate-500">
+                                        <div class="text-[11px] text-slate-500 dark:text-slate-400">
                                             {{ $student->user->email }}
                                         </div>
                                     </div>
                                 </div>
                             </td>
 
-                            <td class="px-6 py-4 font-mono font-bold text-slate-800">
+                            <td class="px-6 py-4 font-mono font-bold text-slate-800 dark:text-slate-200">
                                 {{ $student->student_number }}
                             </td>
 
                             <td class="px-6 py-4">
-                                <div class="font-semibold text-slate-800">
+                                <div class="font-semibold text-slate-800 dark:text-slate-200">
                                     {{ $student->course }}
                                 </div>
-                                <div class="text-[11px] text-slate-400">
+                                <div class="text-[11px] text-slate-400 dark:text-slate-500">
                                     {{ $student->year_level }}
                                 </div>
                             </td>
 
                             <td class="px-6 py-4">
-                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                                     {{ $student->applications->count() }} Submitted
                                 </span>
                             </td>
@@ -105,11 +105,11 @@
                             <td class="px-6 py-4">
                                 @if($student->scholars->isNotEmpty())
                                     @php $activeScholar = $student->scholars->first(); @endphp
-                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-emerald-100 text-emerald-800 border border-emerald-300">
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800">
                                         Scholar: {{ $activeScholar->scholarship->name ?? 'Active' }}
                                     </span>
                                 @else
-                                    <span class="text-slate-400 text-xs font-medium">None</span>
+                                    <span class="text-slate-400 dark:text-slate-500 text-xs font-medium">None</span>
                                 @endif
                             </td>
 
@@ -125,7 +125,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-12 text-center text-slate-500 text-xs">
+                            <td colspan="6" class="px-6 py-12 text-center text-slate-500 dark:text-slate-400 text-xs">
                                 No registered students found matching search filters.
                             </td>
                         </tr>
@@ -135,7 +135,7 @@
         </div>
 
         @if($students->hasPages())
-            <div class="px-6 py-4 border-t border-slate-200 bg-slate-50">
+            <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
                 {{ $students->links() }}
             </div>
         @endif

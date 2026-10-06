@@ -132,11 +132,18 @@
                         Registered Students
                     </a>
 
+                    <a href="{{ route('admin.welfare-cases.index') }}" class="flex items-center px-3.5 py-2.5 text-xs font-bold rounded-xl transition {{ request()->routeIs('admin.welfare-cases.*') ? 'bg-[#FFC107] text-[#3B060F] font-extrabold shadow-xs' : 'text-slate-200 hover:bg-[#500A15] hover:text-white' }}">
+                        <svg class="w-4 h-4 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                        Welfare Cases
+                    </a>
+
                     <a href="{{ route('admin.reports.index') }}" class="flex items-center px-3.5 py-2.5 text-xs font-bold rounded-xl transition {{ request()->routeIs('admin.reports.*') ? 'bg-[#FFC107] text-[#3B060F] font-extrabold shadow-xs' : 'text-slate-200 hover:bg-[#500A15] hover:text-white' }}">
                         <svg class="w-4 h-4 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        Reports & Analytics
+                        Reports
                     </a>
 
                     <a href="{{ route('admin.settings.index') }}" class="flex items-center px-3.5 py-2.5 text-xs font-bold rounded-xl transition {{ request()->routeIs('admin.settings.*') ? 'bg-[#FFC107] text-[#3B060F] font-extrabold shadow-xs' : 'text-slate-200 hover:bg-[#500A15] hover:text-white' }}">
@@ -145,6 +152,13 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
                         System Settings
+                    </a>
+
+                    <a href="{{ route('admin.system-logs.index') }}" class="flex items-center px-3.5 py-2.5 text-xs font-bold rounded-xl transition {{ request()->routeIs('admin.system-logs.*') ? 'bg-[#FFC107] text-[#3B060F] font-extrabold shadow-xs' : 'text-slate-200 hover:bg-[#500A15] hover:text-white' }}">
+                        <svg class="w-4 h-4 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        System Logs & Audit
                     </a>
                 @else
                     <!-- STUDENT SIDEBAR MENU -->
@@ -178,6 +192,13 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
                         My Applications
+                    </a>
+
+                    <a href="{{ route('student.welfare-cases.index') }}" class="flex items-center px-3.5 py-2.5 text-xs font-bold rounded-xl transition {{ request()->routeIs('student.welfare-cases.*') ? 'bg-[#FFC107] text-[#3B060F] font-extrabold shadow-xs' : 'text-slate-200 hover:bg-[#500A15] hover:text-white' }}">
+                        <svg class="w-4 h-4 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                        Welfare Cases
                     </a>
 
                     <a href="{{ route('student.compliance.index') }}" class="flex items-center px-3.5 py-2.5 text-xs font-bold rounded-xl transition {{ request()->routeIs('student.compliance.*') ? 'bg-[#FFC107] text-[#3B060F] font-extrabold shadow-xs' : 'text-slate-200 hover:bg-[#500A15] hover:text-white' }}">

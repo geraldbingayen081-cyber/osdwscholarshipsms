@@ -5,7 +5,7 @@
         college: '{{ old('college', $student->college?->value ?? '') }}',
         program: '{{ old('program', $student->program ?? $student->course ?? '') }}',
         programsByCollege: {
-            'CAg': [
+            'COA': [
                 'BS Agriculture (Crop Science)',
                 'BS Agriculture (Animal Science)',
                 'Diploma in Agricultural Technology - Bachelor in Agricultural Technology (DAT-BAT)'
@@ -16,7 +16,7 @@
             'CICS': [
                 'BS Information Technology (BSIT)'
             ],
-            'CTE': [
+            'CTED': [
                 'Bachelor of Elementary Education (BEEd)',
                 'Bachelor of Secondary Education - English (BSEd-ENG)',
                 'Bachelor of Secondary Education - Mathematics (BSEd-MATH)',
@@ -380,10 +380,10 @@
                                             @change="if(availablePrograms.length > 0) { program = availablePrograms[0]; }"
                                             class="w-full py-2 px-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none font-medium">
                                         <option value="">-- Select College --</option>
-                                        <option value="CAg">CAg - College of Agriculture</option>
-                                        <option value="CHM">CHM - College of Hospitality Management</option>
                                         <option value="CICS">CICS - College of Information & Computing Sciences</option>
-                                        <option value="CTE">CTE - College of Teacher Education</option>
+                                        <option value="COA">COA - College of Agriculture</option>
+                                        <option value="CTED">CTED - College of Teacher Education</option>
+                                        <option value="CHM">CHM - College of Hospitality Management</option>
                                     </select>
                                 </div>
 

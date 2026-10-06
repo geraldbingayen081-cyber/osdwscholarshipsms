@@ -5,8 +5,8 @@
 
     <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h3 class="text-base font-bold text-slate-800">Scholarship Programs Catalog</h3>
-            <p class="text-xs text-slate-500">Manage institutional, LGU, and government scholarship offerings.</p>
+            <h3 class="text-base font-bold text-slate-800 dark:text-white">Scholarship Programs Catalog</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Manage institutional, LGU, and government scholarship offerings.</p>
         </div>
         <a href="{{ route('admin.scholarships.create') }}" class="px-4 py-2 bg-csu-green text-white font-bold rounded-lg text-xs hover:bg-csu-green-dark transition shadow-sm inline-flex items-center gap-1.5 shrink-0">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -17,7 +17,7 @@
     </div>
 
     <!-- Filter & Search Bar -->
-    <div class="mb-6 bg-white rounded-2xl shadow-xs border border-slate-200 p-4">
+    <div class="mb-6 bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-200 dark:border-slate-800 p-4">
         <form method="GET" action="{{ route('admin.scholarships.index') }}" class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
             <!-- Search Input -->
             <div class="sm:col-span-6 relative">
@@ -32,12 +32,12 @@
                        placeholder="Search scholarship name or provider..." 
                        {{ $search ? 'autofocus onfocus="this.setSelectionRange(this.value.length, this.value.length)"' : '' }}
                        oninput="clearTimeout(window._searchTimer); window._searchTimer = setTimeout(() => this.form.submit(), 400)"
-                       class="w-full py-2 pl-9 pr-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
+                       class="w-full py-2 pl-9 pr-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
             </div>
 
             <!-- Academic School Year Filter -->
             <div class="sm:col-span-3">
-                <select name="school_year" onchange="this.form.submit()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 font-semibold focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
+                <select name="school_year" onchange="this.form.submit()" class="w-full py-2 px-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-700 dark:text-slate-200 font-semibold focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
                     <option value="">-- All School Years --</option>
                     @foreach($availableSchoolYears as $sy)
                         @php
@@ -52,7 +52,7 @@
 
             <!-- Status Filter -->
             <div class="sm:col-span-3 flex items-center gap-2">
-                <select name="status" onchange="this.form.submit()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 font-semibold focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
+                <select name="status" onchange="this.form.submit()" class="w-full py-2 px-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-700 dark:text-slate-200 font-semibold focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
                     <option value="">-- All Statuses --</option>
                     <option value="draft" {{ $status === 'draft' ? 'selected' : '' }}>Draft</option>
                     <option value="open" {{ $status === 'open' ? 'selected' : '' }}>Open</option>
@@ -60,17 +60,17 @@
                     <option value="archived" {{ $status === 'archived' ? 'selected' : '' }}>Archived</option>
                 </select>
                 @if($search || $schoolYear || $status)
-                    <a href="{{ route('admin.scholarships.index') }}" class="px-2.5 py-1.5 text-xs font-bold text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition shrink-0" title="Reset Filters">Reset</a>
+                    <a href="{{ route('admin.scholarships.index') }}" class="px-2.5 py-1.5 text-xs font-bold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition shrink-0" title="Reset Filters">Reset</a>
                 @endif
             </div>
         </form>
     </div>
 
     <!-- Scholarships Table -->
-    <div class="bg-white rounded-xl shadow-xs border border-slate-200 overflow-hidden">
+    <div class="bg-white dark:bg-slate-900 rounded-xl shadow-xs border border-slate-200 dark:border-slate-800 overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm text-slate-600">
-                <thead class="bg-slate-50 text-xs font-bold text-slate-500 uppercase border-b border-slate-200">
+            <table class="w-full text-left text-sm text-slate-600 dark:text-slate-300">
+                <thead class="bg-slate-100 dark:bg-slate-800 text-[11px] font-bold text-slate-700 dark:text-slate-200 uppercase border-b border-slate-200 dark:border-slate-700">
                     <tr>
                         <th class="px-6 py-3.5">Scholarship Program</th>
                         <th class="px-6 py-3.5">Provider</th>
@@ -82,41 +82,41 @@
                         <th class="px-6 py-3.5 text-right">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-200">
+                <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
                     @forelse($scholarships as $s)
-                        <tr class="hover:bg-slate-50">
+                        <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/60 transition">
                             <td class="px-6 py-4">
-                                <a href="{{ route('admin.scholarships.show', $s->id) }}" class="font-bold text-slate-800 hover:text-csu-green hover:underline">
+                                <a href="{{ route('admin.scholarships.show', $s->id) }}" class="font-bold text-slate-800 dark:text-white hover:text-csu-green hover:underline">
                                     {{ $s->name }}
                                 </a>
-                                <p class="text-xs text-slate-500 line-clamp-1">{{ $s->description }}</p>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1">{{ $s->description }}</p>
                             </td>
-                            <td class="px-6 py-4 text-xs font-semibold text-slate-700">
+                            <td class="px-6 py-4 text-xs font-semibold text-slate-700 dark:text-slate-300">
                                 {{ $s->provider }}
                             </td>
-                            <td class="px-6 py-4 text-xs text-slate-600">
-                                <span class="font-bold text-slate-800">{{ $s->school_year_label }}</span>
-                                <p class="text-[11px] font-semibold {{ $s->isContinuing() ? 'text-emerald-700' : 'text-blue-700' }}">
+                            <td class="px-6 py-4 text-xs text-slate-600 dark:text-slate-400">
+                                <span class="font-bold text-slate-800 dark:text-slate-200">{{ $s->school_year_label }}</span>
+                                <p class="text-[11px] font-semibold {{ $s->isContinuing() ? 'text-emerald-700 dark:text-emerald-400' : 'text-blue-700 dark:text-blue-400' }}">
                                     {{ $s->coverage_type_label }}
                                 </p>
                             </td>
-                            <td class="px-6 py-4 text-xs font-bold text-slate-800">
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-extrabold {{ $s->remaining_slots > 0 ? 'bg-slate-100 text-slate-800 border border-slate-200' : 'bg-rose-100 text-rose-800 border border-rose-200' }}">
+                            <td class="px-6 py-4 text-xs font-bold text-slate-800 dark:text-slate-200">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-extrabold {{ $s->remaining_slots > 0 ? 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700' : 'bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border border-rose-200 dark:border-rose-800' }}">
                                     {{ $s->remaining_slots }}/{{ $s->available_slots }} Available
                                 </span>
                             </td>
-                            <td class="px-6 py-4 text-xs text-slate-700 font-medium">
+                            <td class="px-6 py-4 text-xs text-slate-700 dark:text-slate-300 font-medium">
                                 {{ $s->applications_count }} Submitted
                             </td>
-                            <td class="px-6 py-4 text-xs text-slate-600">
+                            <td class="px-6 py-4 text-xs text-slate-600 dark:text-slate-400">
                                 {{ $s->application_deadline->format('M d, Y') }}
                             </td>
                             <td class="px-6 py-4">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold capitalize 
-                                    @if($s->status === 'open') bg-emerald-100 text-emerald-800 border border-emerald-300
-                                    @elseif($s->status === 'closed') bg-red-100 text-red-800 border border-red-300
-                                    @elseif($s->status === 'archived') bg-slate-200 text-slate-700 border border-slate-300
-                                    @else bg-amber-100 text-amber-800 border border-amber-300 @endif">
+                                    @if($s->status === 'open') bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800
+                                    @elseif($s->status === 'closed') bg-red-100 text-red-800 border border-red-300 dark:bg-red-950/60 dark:text-red-300 dark:border-red-800
+                                    @elseif($s->status === 'archived') bg-slate-100 text-slate-700 border border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700
+                                    @else bg-amber-100 text-amber-800 border border-amber-300 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800 @endif">
                                     {{ $s->status }}
                                 </span>
                             </td>
@@ -129,7 +129,7 @@
                                         </svg>
                                         View
                                     </a>
-                                    <a href="{{ route('admin.scholarships.edit', $s->id) }}" class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-extrabold bg-slate-800 text-white rounded-xl hover:bg-slate-900 transition shadow-2xs text-center">
+                                    <a href="{{ route('admin.scholarships.edit', $s->id) }}" class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-extrabold bg-slate-800 dark:bg-slate-700 text-white rounded-xl hover:bg-slate-900 dark:hover:bg-slate-600 transition shadow-2xs text-center">
                                         <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                         </svg>
@@ -150,7 +150,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="px-6 py-8 text-center text-slate-500">
+                            <td colspan="8" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
                                 No scholarship programs found matching criteria.
                             </td>
                         </tr>
@@ -159,7 +159,7 @@
             </table>
         </div>
 
-        <div class="px-6 py-4 border-t border-slate-200 bg-slate-50">
+        <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
             {{ $scholarships->links() }}
         </div>
     </div>

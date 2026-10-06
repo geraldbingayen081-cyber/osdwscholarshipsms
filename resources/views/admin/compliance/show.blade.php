@@ -154,38 +154,38 @@
         </div>
 
         <!-- Scholar Compliance Roster Table -->
-        <div class="bg-white rounded-2xl shadow-xs border border-slate-200 overflow-hidden">
-            <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
-                <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
-                    <svg class="w-4 h-4 text-[#3B060F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-200 dark:border-slate-800 overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex items-center justify-between">
+                <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider flex items-center gap-2">
+                    <svg class="w-4 h-4 text-[#3B060F] dark:text-[#FFC107]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                     </svg>
                     Scholar Compliance Matrix
                 </h3>
-                <span class="text-xs font-semibold text-slate-500">
+                <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">
                     Showing {{ $scholarCompliances->firstItem() ?? 0 }} to {{ $scholarCompliances->lastItem() ?? 0 }} of {{ $scholarCompliances->total() }} Scholars
                 </span>
             </div>
 
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs text-slate-600">
-                    <thead class="bg-slate-100/70 text-[11px] font-bold text-slate-500 uppercase border-b border-slate-200">
+                <table class="w-full text-left text-xs text-slate-600 dark:text-slate-300">
+                    <thead class="bg-slate-100 dark:bg-slate-800 text-[11px] font-bold text-slate-700 dark:text-slate-200 uppercase border-b border-slate-200 dark:border-slate-700 tracking-wider">
                         <tr>
-                            <th class="px-6 py-3">Scholar Grantee</th>
-                            <th class="px-6 py-3">Student ID</th>
-                            <th class="px-6 py-3">Course & Year</th>
-                            <th class="px-6 py-3">Requirements Progress</th>
-                            <th class="px-6 py-3">Overall Status</th>
-                            <th class="px-6 py-3 text-right">Action</th>
+                            <th class="px-6 py-3.5">Scholar Grantee</th>
+                            <th class="px-6 py-3.5">Student ID</th>
+                            <th class="px-6 py-3.5">Course & Year</th>
+                            <th class="px-6 py-3.5">Requirements Progress</th>
+                            <th class="px-6 py-3.5">Overall Status</th>
+                            <th class="px-6 py-3.5 text-right">Action</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-200">
+                    <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
                         @forelse($scholarCompliances as $sc)
                             @php
                                 $studentUser = $sc->scholar->student->user ?? null;
                                 $docsKeyed = $sc->documents->keyBy('compliance_requirement_id');
                             @endphp
-                            <tr class="hover:bg-slate-50/80 transition">
+                            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/60 transition">
                                 <!-- Scholar Grantee -->
                                 <td class="px-6 py-4">
                                     <div class="flex items-center space-x-3">
@@ -197,10 +197,10 @@
                                             </div>
                                         @endif
                                         <div>
-                                            <div class="font-extrabold text-slate-900 text-sm">
+                                            <div class="font-extrabold text-slate-900 dark:text-white text-sm">
                                                 {{ $studentUser->full_name ?? 'N/A' }}
                                             </div>
-                                            <div class="text-[11px] text-slate-400 font-medium">
+                                            <div class="text-[11px] text-slate-400 dark:text-slate-400 font-medium">
                                                 {{ $studentUser->email ?? 'N/A' }}
                                             </div>
                                         </div>
@@ -209,17 +209,17 @@
 
                                 <!-- Student ID -->
                                 <td class="px-6 py-4">
-                                    <span class="font-mono font-bold text-slate-800 text-xs bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200">
+                                    <span class="font-mono font-bold text-slate-800 dark:text-slate-200 text-xs bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-md border border-slate-200 dark:border-slate-700">
                                         {{ $sc->scholar->student->student_number ?? 'N/A' }}
                                     </span>
                                 </td>
 
                                 <!-- Course & Year -->
                                 <td class="px-6 py-4">
-                                    <div class="font-bold text-slate-800 text-xs">
+                                    <div class="font-bold text-slate-800 dark:text-slate-200 text-xs">
                                         {{ $sc->scholar->student->course ?? 'N/A' }}
                                     </div>
-                                    <div class="text-[11px] text-slate-500 font-medium mt-0.5">
+                                    <div class="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">
                                         {{ $sc->scholar->student->year_level ?? 'N/A' }}
                                     </div>
                                 </td>
@@ -232,29 +232,29 @@
                                                 $doc = $docsKeyed->get($reqItem->id);
                                             @endphp
                                             @if(!$doc)
-                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-500 border border-slate-200" title="{{ $reqItem->name }}: Not Uploaded">
-                                                    <span class="h-1.5 w-1.5 rounded-full bg-slate-300"></span>
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700" title="{{ $reqItem->name }}: Not Uploaded">
+                                                    <span class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
                                                     {{ Str::limit($reqItem->name, 14) }}
                                                 </span>
                                             @elseif($doc->verification_status === 'verified')
-                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300" title="{{ $reqItem->name }}: Verified">
-                                                    <svg class="w-3 h-3 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800" title="{{ $reqItem->name }}: Verified">
+                                                    <svg class="w-3 h-3 text-emerald-600 dark:text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
                                                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                                                     </svg>
                                                     {{ Str::limit($reqItem->name, 14) }}
                                                 </span>
                                             @elseif($doc->verification_status === 'needs_correction')
-                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300" title="{{ $reqItem->name }}: Needs Correction">
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800" title="{{ $reqItem->name }}: Needs Correction">
                                                     <span class="h-1.5 w-1.5 rounded-full bg-amber-500"></span>
                                                     {{ Str::limit($reqItem->name, 14) }}
                                                 </span>
                                             @elseif($doc->verification_status === 'rejected')
-                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-300" title="{{ $reqItem->name }}: Rejected">
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-300 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-800" title="{{ $reqItem->name }}: Rejected">
                                                     <span class="h-1.5 w-1.5 rounded-full bg-rose-500"></span>
                                                     {{ Str::limit($reqItem->name, 14) }}
                                                 </span>
                                             @else
-                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-800 border border-indigo-300" title="{{ $reqItem->name }}: Uploaded / Pending Review">
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-800 border border-indigo-300 dark:bg-indigo-950/60 dark:text-indigo-300 dark:border-indigo-800" title="{{ $reqItem->name }}: Uploaded / Pending Review">
                                                     <span class="h-1.5 w-1.5 rounded-full bg-indigo-500"></span>
                                                     {{ Str::limit($reqItem->name, 14) }}
                                                 </span>
@@ -266,12 +266,12 @@
                                 <!-- Overall Status Badge -->
                                 <td class="px-6 py-4">
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider
-                                        @if($sc->status === 'completed') bg-emerald-100 text-emerald-800 border border-emerald-300
-                                        @elseif($sc->status === 'under_review' || $sc->status === 'submitted') bg-indigo-100 text-indigo-800 border border-indigo-300
-                                        @elseif($sc->status === 'needs_correction') bg-amber-100 text-amber-800 border border-amber-300
-                                        @elseif($sc->status === 'partially_submitted') bg-blue-100 text-blue-800 border border-blue-300
-                                        @elseif($sc->status === 'overdue') bg-rose-100 text-rose-800 border border-rose-300
-                                        @else bg-slate-100 text-slate-700 border border-slate-300 @endif">
+                                        @if($sc->status === 'completed') bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800
+                                        @elseif($sc->status === 'under_review' || $sc->status === 'submitted') bg-indigo-100 text-indigo-800 border border-indigo-300 dark:bg-indigo-950/60 dark:text-indigo-300 dark:border-indigo-800
+                                        @elseif($sc->status === 'needs_correction') bg-amber-100 text-amber-800 border border-amber-300 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800
+                                        @elseif($sc->status === 'partially_submitted') bg-blue-100 text-blue-800 border border-blue-300 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-800
+                                        @elseif($sc->status === 'overdue') bg-rose-100 text-rose-800 border border-rose-300 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-800
+                                        @else bg-slate-100 text-slate-700 border border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 @endif">
                                         {{ str_replace('_', ' ', $sc->status) }}
                                     </span>
                                 </td>

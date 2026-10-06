@@ -71,6 +71,26 @@ class Application extends Model
         return in_array($this->attributes['status'] ?? '', ['draft', 'deficient']);
     }
 
+    public function scopePending($query)
+    {
+        return $query->where('status', 'pending');
+    }
+
+    public function scopeApproved($query)
+    {
+        return $query->where('status', 'approved');
+    }
+
+    public function scopeRejected($query)
+    {
+        return $query->where('status', 'rejected');
+    }
+
+    public function welfareCaseReferral()
+    {
+        return $this->belongsTo(WelfareCaseReferral::class);
+    }
+
     public function isApproved(): bool
     {
         return $this->attributes['status'] === 'approved';

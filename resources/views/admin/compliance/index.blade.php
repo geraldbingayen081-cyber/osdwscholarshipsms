@@ -72,7 +72,7 @@
         </div>
 
         <!-- Filter & Search Form -->
-        <div class="bg-white rounded-2xl shadow-xs border border-slate-200 p-4 mb-6">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-200 dark:border-slate-800 p-4 mb-6">
             <form method="GET" action="{{ route('admin.compliance.index') }}" class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
                 <!-- Search Input -->
                 <div class="sm:col-span-5 relative">
@@ -87,12 +87,12 @@
                            placeholder="Search request title, semester, or scholarship..." 
                            {{ $search ? 'autofocus onfocus="this.setSelectionRange(this.value.length, this.value.length)"' : '' }}
                            oninput="clearTimeout(window._searchTimer); window._searchTimer = setTimeout(() => this.form.submit(), 400)"
-                           class="w-full py-2 pl-9 pr-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
+                           class="w-full py-2 pl-9 pr-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
                 </div>
 
                 <!-- Scholarship Filter -->
                 <div class="sm:col-span-4">
-                    <select name="scholarship_id" onchange="this.form.submit()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 font-semibold focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
+                    <select name="scholarship_id" onchange="this.form.submit()" class="w-full py-2 px-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-700 dark:text-slate-100 font-semibold focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
                         <option value="">All Scholarship Programs</option>
                         @foreach($scholarships as $sch)
                             <option value="{{ $sch->id }}" {{ $scholarshipId == $sch->id ? 'selected' : '' }}>
@@ -104,7 +104,7 @@
 
                 <!-- Status Filter -->
                 <div class="sm:col-span-3 flex items-center gap-2">
-                    <select name="status" onchange="this.form.submit()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 font-semibold focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
+                    <select name="status" onchange="this.form.submit()" class="w-full py-2 px-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-700 dark:text-slate-100 font-semibold focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
                         <option value="">All Statuses</option>
                         <option value="active" {{ $status === 'active' ? 'selected' : '' }}>Active</option>
                         <option value="extended" {{ $status === 'extended' ? 'selected' : '' }}>Extended</option>
@@ -112,60 +112,60 @@
                     </select>
 
                     @if($search || $scholarshipId || $status || $schoolYear)
-                        <a href="{{ route('admin.compliance.index') }}" class="px-2.5 py-1.5 text-xs font-bold text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition shrink-0" title="Reset Filters">Reset</a>
+                        <a href="{{ route('admin.compliance.index') }}" class="px-2.5 py-1.5 text-xs font-bold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition shrink-0" title="Reset Filters">Reset</a>
                     @endif
                 </div>
             </form>
         </div>
 
         <!-- Compliance Requests Table -->
-        <div class="bg-white rounded-2xl shadow-xs border border-slate-200 overflow-hidden">
-            <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
-                <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
-                    <svg class="w-4 h-4 text-[#3B060F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-200 dark:border-slate-800 overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex items-center justify-between">
+                <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider flex items-center gap-2">
+                    <svg class="w-4 h-4 text-[#3B060F] dark:text-[#FFC107]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                     </svg>
                     Compliance Requests Batch Log
                 </h3>
-                <span class="text-xs font-semibold text-slate-500">
+                <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">
                     Showing {{ $complianceRequests->firstItem() ?? 0 }} to {{ $complianceRequests->lastItem() ?? 0 }} of {{ $complianceRequests->total() }} Requests
                 </span>
             </div>
 
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs text-slate-600">
-                    <thead class="bg-slate-100/70 text-[11px] font-bold text-slate-500 uppercase border-b border-slate-200">
+                <table class="w-full text-left text-xs text-slate-600 dark:text-slate-300">
+                    <thead class="bg-slate-100 dark:bg-slate-800 text-[11px] font-bold text-slate-700 dark:text-slate-200 uppercase border-b border-slate-200 dark:border-slate-700 tracking-wider">
                         <tr>
-                            <th class="px-6 py-3">Program & Request Title</th>
-                            <th class="px-6 py-3">Period</th>
-                            <th class="px-6 py-3">Requirements</th>
-                            <th class="px-6 py-3">Assigned Scholars</th>
-                            <th class="px-6 py-3">Deadline</th>
-                            <th class="px-6 py-3">Status</th>
-                            <th class="px-6 py-3 text-right">Action</th>
+                            <th class="px-6 py-3.5">Program & Request Title</th>
+                            <th class="px-6 py-3.5">Period</th>
+                            <th class="px-6 py-3.5">Requirements</th>
+                            <th class="px-6 py-3.5">Assigned Scholars</th>
+                            <th class="px-6 py-3.5">Deadline</th>
+                            <th class="px-6 py-3.5">Status</th>
+                            <th class="px-6 py-3.5 text-right">Action</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-200">
+                    <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
                         @forelse($complianceRequests as $req)
-                            <tr class="hover:bg-slate-50/80 transition">
+                            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/60 transition">
                                 <!-- Program & Request Title -->
                                 <td class="px-6 py-4">
-                                    <div class="font-extrabold text-slate-900 text-sm">
+                                    <div class="font-extrabold text-slate-900 dark:text-white text-sm">
                                         {{ $req->title }}
                                     </div>
-                                    <div class="text-[11px] text-slate-500 font-semibold mt-0.5 flex items-center gap-1.5">
-                                        <span class="text-[#3B060F]">{{ $req->scholarship->name }}</span>
-                                        <span class="text-slate-300">•</span>
-                                        <span class="{{ $req->scholarship->isContinuing() ? 'text-emerald-700' : 'text-blue-700' }}">{{ $req->scholarship->coverage_type_label }}</span>
+                                    <div class="text-[11px] text-slate-500 dark:text-slate-400 font-semibold mt-0.5 flex items-center gap-1.5">
+                                        <span class="text-[#3B060F] dark:text-[#FFC107]">{{ $req->scholarship->name }}</span>
+                                        <span class="text-slate-300 dark:text-slate-600">•</span>
+                                        <span class="{{ $req->scholarship->isContinuing() ? 'text-emerald-700 dark:text-emerald-400' : 'text-blue-700 dark:text-blue-400' }}">{{ $req->scholarship->coverage_type_label }}</span>
                                     </div>
                                 </td>
 
                                 <!-- Period -->
                                 <td class="px-6 py-4">
-                                    <div class="font-bold text-slate-800 text-xs">
+                                    <div class="font-bold text-slate-800 dark:text-slate-200 text-xs">
                                         {{ $req->semester }}
                                     </div>
-                                    <div class="text-[11px] text-slate-500 font-medium">
+                                    <div class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
                                         AY {{ $req->school_year }}
                                     </div>
                                 </td>
@@ -173,11 +173,11 @@
                                 <!-- Requirements list count -->
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-1.5">
-                                        <span class="px-2 py-0.5 rounded-md bg-slate-100 font-bold text-slate-700 text-[11px] border border-slate-200">
+                                        <span class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 font-bold text-slate-700 dark:text-slate-200 text-[11px] border border-slate-200 dark:border-slate-700">
                                             {{ $req->requirements->count() }} items
                                         </span>
                                     </div>
-                                    <div class="text-[10px] text-slate-400 mt-1 truncate max-w-[180px]" title="{{ $req->requirements->pluck('name')->implode(', ') }}">
+                                    <div class="text-[10px] text-slate-400 dark:text-slate-400 mt-1 truncate max-w-[180px]" title="{{ $req->requirements->pluck('name')->implode(', ') }}">
                                         {{ $req->requirements->pluck('name')->implode(', ') }}
                                     </div>
                                 </td>
@@ -189,25 +189,25 @@
                                         $completedCount = $req->scholarCompliances->where('status', 'completed')->count();
                                         $percent = $totalAssigned > 0 ? round(($completedCount / $totalAssigned) * 100) : 0;
                                     @endphp
-                                    <div class="flex items-center justify-between text-[11px] font-bold text-slate-700 mb-1">
+                                    <div class="flex items-center justify-between text-[11px] font-bold text-slate-700 dark:text-slate-200 mb-1">
                                         <span>{{ $completedCount }} / {{ $totalAssigned }} Complete</span>
                                         <span>{{ $percent }}%</span>
                                     </div>
-                                    <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                                    <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1.5 overflow-hidden">
                                         <div class="bg-emerald-600 h-1.5 rounded-full" style="width: {{ $percent }}%"></div>
                                     </div>
                                 </td>
 
                                 <!-- Deadline -->
                                 <td class="px-6 py-4">
-                                    <div class="font-bold {{ $req->isPastDeadline() ? 'text-red-700' : 'text-slate-800' }}">
+                                    <div class="font-bold {{ $req->isPastDeadline() ? 'text-red-700 dark:text-red-400' : 'text-slate-800 dark:text-slate-200' }}">
                                         {{ $req->deadline->format('M d, Y') }}
                                     </div>
                                     <div class="text-[10px] mt-0.5">
                                         @if($req->isPastDeadline())
-                                            <span class="text-red-600 font-bold">Past Deadline</span>
+                                            <span class="text-red-600 dark:text-red-400 font-bold">Past Deadline</span>
                                         @else
-                                            <span class="text-slate-400 font-medium">{{ $req->days_remaining }} left</span>
+                                            <span class="text-slate-400 dark:text-slate-400 font-medium">{{ $req->days_remaining }} left</span>
                                         @endif
                                     </div>
                                 </td>
@@ -215,9 +215,9 @@
                                 <!-- Status -->
                                 <td class="px-6 py-4">
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider
-                                        @if($req->status === 'active') bg-emerald-100 text-emerald-800 border border-emerald-300
-                                        @elseif($req->status === 'extended') bg-blue-100 text-blue-800 border border-blue-300
-                                        @else bg-slate-100 text-slate-800 border border-slate-300 @endif">
+                                        @if($req->status === 'active') bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800
+                                        @elseif($req->status === 'extended') bg-blue-100 text-blue-800 border border-blue-300 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-800
+                                        @else bg-slate-100 text-slate-800 border border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 @endif">
                                         {{ ucfirst($req->status) }}
                                     </span>
                                 </td>

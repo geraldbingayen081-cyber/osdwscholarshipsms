@@ -110,6 +110,70 @@ class AdminScholarManagementTest extends TestCase
         $response->assertSee('Scholar Profile: John Doe');
         $response->assertSee('Submitted Requirements');
     }
+
+    public function test_admin_can_directly_enroll_student_grantee_without_application()
+    {
+        $newStudentUser = User::create([
+            'first_name' => 'Maria',
+            'last_name' => 'Santos',
+            'email' => 'maria@csu.edu.ph',
+            'password' => bcrypt('password123'),
+            'role' => 'student',
+        ]);
+
+        $newStudent = Student::create([
+            'user_id' => $newStudentUser->id,
+            'student_number' => '26-99999',
+            'course' => 'BSIT',
+            'year_level' => '2nd Year',
+            'contact_number' => '+639189876543',
+        ]);
+
+        $response = $this->actingAs($this->admin)->post('/admin/scholars', [
+            'student_id' => $newStudent->id,
+            'scholarship_id' => $this->scholar->scholarship_id,
+            'status' => 'active',
+            'approved_at' => '2026-09-26',
+            'remarks' => 'Direct institutional grantee endorsed by dean',
+        ]);
+
+        $response->assertRedirect('/admin/scholars');
+        $response->assertSessionHas('success');
+
+        $this->assertDatabaseHas('scholars', [
+            'student_id' => $newStudent->id,
+            'scholarship_id' => $this->scholar->scholarship_id,
+            'application_id' => null,
+            'status' => 'active',
+        ]);
+    }
+
+    public function test_admin_cannot_enroll_duplicate_grantee_for_same_scholarship()
+    {
+        $response = $this->actingAs($this->admin)->post('/admin/scholars', [
+            'student_id' => $this->scholar->student_id,
+            'scholarship_id' => $this->scholar->scholarship_id,
+            'status' => 'active',
+        ]);
+
+        $response->assertSessionHas('error');
+    }
+
+    public function test_admin_can_view_profile_of_directly_enrolled_grantee()
+    {
+        $directScholar = Scholar::create([
+            'student_id' => $this->scholar->student_id,
+            'scholarship_id' => $this->scholar->scholarship_id,
+            'application_id' => null,
+            'status' => 'active',
+            'approved_at' => now(),
+        ]);
+
+        $response = $this->actingAs($this->admin)->get("/admin/scholars/{$directScholar->id}");
+
+        $response->assertStatus(200);
+        $response->assertSee('Direct Institutional Grantee');
+    }
 }
 
 

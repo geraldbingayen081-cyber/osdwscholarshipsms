@@ -18,6 +18,7 @@ class StudentApplicationTest extends TestCase
 {
     use RefreshDatabase;
 
+    private User $adminUser;
     private User $studentUser;
     private Student $student;
     private Scholarship $scholarship;
@@ -28,7 +29,7 @@ class StudentApplicationTest extends TestCase
 
         Storage::fake('local');
 
-        $admin = User::create([
+        $this->adminUser = User::create([
             'first_name' => 'Admin',
             'last_name' => 'User',
             'email' => 'admin@csu.edu.ph',
@@ -80,7 +81,7 @@ class StudentApplicationTest extends TestCase
             'academic_year_id' => $ay->id,
             'semester_id' => $sem->id,
             'status' => 'open',
-            'created_by' => $admin->id,
+            'created_by' => $this->adminUser->id,
         ]);
     }
 
@@ -220,6 +221,7 @@ class StudentApplicationTest extends TestCase
             'application_deadline' => now()->addDays(30)->format('Y-m-d'),
             'coverage_type' => 'semester',
             'status' => 'open',
+            'created_by' => $this->adminUser->id,
         ]);
 
         // 1. Attempting to visit apply form

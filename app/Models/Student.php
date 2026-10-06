@@ -15,6 +15,7 @@ class Student extends Model
     protected $fillable = [
         'user_id',
         'student_number',
+        'sex',
         'college',
         'program',
         'course',
@@ -42,6 +43,16 @@ class Student extends Model
     public function applications(): HasMany
     {
         return $this->hasMany(Application::class);
+    }
+
+    public function requirements()
+    {
+        return $this->hasMany(ScholarshipRequirement::class);
+    }
+
+    public function welfareCases()
+    {
+        return $this->hasMany(WelfareCase::class);
     }
 
     public function scholars(): HasMany

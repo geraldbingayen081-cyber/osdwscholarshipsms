@@ -102,6 +102,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     // Scholars Management
     Route::get('/scholars', [AdminScholarController::class, 'index'])->name('scholars.index');
+    Route::post('/scholars', [AdminScholarController::class, 'store'])->name('scholars.store');
     Route::get('/scholars/{scholar}', [AdminScholarController::class, 'show'])->name('scholars.show');
     Route::post('/scholars/{scholar}/status', [AdminScholarController::class, 'updateStatus'])->name('scholars.update-status');
     Route::get('/renewals/{renewal}/download', [AdminScholarController::class, 'downloadRenewalDoc'])->name('scholars.renewals.download');
@@ -130,17 +131,37 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/students/{student}', [StudentManagementController::class, 'show'])->name('students.show');
     Route::put('/students/{student}', [StudentManagementController::class, 'update'])->name('students.update');
 
-    // Reports & Analytics
+    // Reports Management
     Route::get('/reports', [AdminReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/print', [AdminReportController::class, 'print'])->name('reports.print');
+    Route::get('/reports/welfare-dossier/{welfareCase}', [AdminReportController::class, 'welfareDossier'])->name('reports.welfare_dossier');
 
     // System Settings & Admin Profile
     Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings/profile', [\App\Http\Controllers\Admin\SettingController::class, 'updateProfile'])->name('settings.update-profile');
     Route::post('/settings/system', [\App\Http\Controllers\Admin\SettingController::class, 'updateSystem'])->name('settings.update-system');
 
+    // Welfare Cases Management
+    Route::get('/welfare-cases', [\App\Http\Controllers\Admin\WelfareCaseController::class, 'index'])->name('welfare-cases.index');
+    Route::get('/welfare-cases/{welfareCase}', [\App\Http\Controllers\Admin\WelfareCaseController::class, 'show'])->name('welfare-cases.show');
+    Route::post('/welfare-cases/{welfareCase}/status', [\App\Http\Controllers\Admin\WelfareCaseController::class, 'updateStatus'])->name('welfare-cases.update-status');
+    Route::post('/welfare-cases/{welfareCase}/refer', [\App\Http\Controllers\Admin\WelfareCaseController::class, 'refer'])->name('welfare-cases.refer');
+    Route::get('/welfare-cases/documents/{document}/view', [\App\Http\Controllers\Admin\WelfareCaseController::class, 'viewDocument'])->name('welfare-cases.documents.view');
+    Route::get('/welfare-cases/documents/{document}/download', [\App\Http\Controllers\Admin\WelfareCaseController::class, 'downloadDocument'])->name('welfare-cases.documents.download');
+
+    // System Logs & Audit Trail
+    Route::get('/system-logs', [\App\Http\Controllers\Admin\SystemLogController::class, 'index'])->name('system-logs.index');
+    Route::get('/system-logs-export', [\App\Http\Controllers\Admin\SystemLogController::class, 'export'])->name('system-logs.export');
+    Route::get('/system-logs/{systemLog}', [\App\Http\Controllers\Admin\SystemLogController::class, 'show'])->name('system-logs.show');
+    Route::post('/system-logs/clear-old', [\App\Http\Controllers\Admin\SystemLogController::class, 'clearOld'])->name('system-logs.clear-old');
+
     // Data Exports (CSV)
     Route::get('/export/scholars', [\App\Http\Controllers\Admin\ExportController::class, 'exportScholars'])->name('export.scholars');
     Route::get('/export/applications', [\App\Http\Controllers\Admin\ExportController::class, 'exportApplications'])->name('export.applications');
+    Route::get('/export/slot-utilization', [\App\Http\Controllers\Admin\ExportController::class, 'exportSlotUtilization'])->name('export.slot_utilization');
+    Route::get('/export/compliance', [\App\Http\Controllers\Admin\ExportController::class, 'exportCompliance'])->name('export.compliance');
+    Route::get('/export/welfare-cases', [\App\Http\Controllers\Admin\ExportController::class, 'exportWelfareCases'])->name('export.welfare_cases');
+    Route::get('/export/welfare-referrals', [\App\Http\Controllers\Admin\ExportController::class, 'exportWelfareReferrals'])->name('export.welfare_referrals');
 });
 
 /*
@@ -186,4 +207,11 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
+
+    // Welfare Cases
+    Route::get('/welfare-cases', [\App\Http\Controllers\Student\WelfareCaseController::class, 'index'])->name('welfare-cases.index');
+    Route::get('/welfare-cases/create', [\App\Http\Controllers\Student\WelfareCaseController::class, 'create'])->name('welfare-cases.create');
+    Route::post('/welfare-cases', [\App\Http\Controllers\Student\WelfareCaseController::class, 'store'])->name('welfare-cases.store');
+    Route::get('/welfare-cases/{welfareCase}', [\App\Http\Controllers\Student\WelfareCaseController::class, 'show'])->name('welfare-cases.show');
+    Route::get('/welfare-cases/documents/{document}/view', [\App\Http\Controllers\Student\WelfareCaseController::class, 'viewDocument'])->name('welfare-cases.documents.view');
 });

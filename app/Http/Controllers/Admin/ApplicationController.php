@@ -152,6 +152,19 @@ class ApplicationController extends Controller
             if ($application->student && $application->student->user) {
                 $application->student->user->notify(new ApplicationStatusUpdated($application, $validated['remarks']));
             }
+
+            \App\Models\SystemLog::record(
+                'Application',
+                'status_change',
+                "Updated application #APP-{$application->id} for " . ($application->student->user->full_name ?? 'Student') . " to " . ucfirst(str_replace('_', ' ', $validated['status'])) . ".",
+                $application,
+                [
+                    'old_status' => $oldStatus,
+                    'new_status' => $validated['status'],
+                    'remarks' => $validated['remarks'] ?? null,
+                    'scholar_created' => (bool)$scholar,
+                ]
+            );
         });
 
         if ($request->expectsJson() || $request->ajax() || $request->wantsJson()) {
@@ -223,6 +236,18 @@ class ApplicationController extends Controller
 
                 $updatedCount++;
             }
+
+            \App\Models\SystemLog::record(
+                'Application',
+                'bulk_status_change',
+                "Bulk updated {$updatedCount} application(s) to " . ucfirst(str_replace('_', ' ', $validated['status'])) . ".",
+                null,
+                [
+                    'application_ids' => $validated['application_ids'],
+                    'new_status' => $validated['status'],
+                    'remarks' => $validated['remarks'] ?? null,
+                ]
+            );
         });
 
         $stats = [
@@ -273,6 +298,19 @@ class ApplicationController extends Controller
             if ($document->application->student && $document->application->student->user) {
                 $document->application->student->user->notify(new DocumentStatusUpdated($document, $validated['status'], $validated['remarks'] ?? null));
             }
+
+            \App\Models\SystemLog::record(
+                'Application',
+                'verify_document',
+                "Document '{$document->original_filename}' for Application #APP-{$document->application_id} marked as " . ucfirst(str_replace('_', ' ', $validated['status'])) . ".",
+                $document,
+                [
+                    'application_id' => $document->application_id,
+                    'document_id' => $document->id,
+                    'status' => $validated['status'],
+                    'remarks' => $validated['remarks'] ?? null,
+                ]
+            );
         });
 
         return redirect()->route('admin.applications.show', $document->application_id)

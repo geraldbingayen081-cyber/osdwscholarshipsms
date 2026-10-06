@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('student_id')->constrained('students')->onDelete('cascade');
             $table->foreignId('scholarship_id')->constrained('scholarships')->onDelete('cascade');
-            $table->foreignId('application_id')->unique()->constrained('applications')->onDelete('cascade');
+            $table->foreignId('application_id')->nullable()->constrained('applications')->onDelete('cascade');
             $table->enum('status', ['active', 'for_renewal', 'completed', 'terminated'])->default('active');
             $table->timestamp('approved_at')->nullable();
             $table->timestamps();

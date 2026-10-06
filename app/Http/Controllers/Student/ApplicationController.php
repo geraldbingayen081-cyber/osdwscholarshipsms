@@ -127,15 +127,26 @@ class ApplicationController extends Controller
 
         $validated = $request->validate($rules, $messages);
 
-        DB::transaction(function () use ($student, $scholarship, $documentRequirements, $request) {
+        $createdApplication = null;
+
+        DB::transaction(function () use ($student, $scholarship, $documentRequirements, $request, &$createdApplication) {
+            // Check for existing Welfare Case Referral
+            $referral = \App\Models\WelfareCaseReferral::whereHas('welfareCase', function ($q) use ($student) {
+                $q->where('student_id', $student->id);
+            })->where('scholarship_id', $scholarship->id)
+              ->doesntHave('application') // Ensure it hasn't been used yet if we want, or just get the latest
+              ->latest()
+              ->first();
+
             // Create Application Record
-            $application = Application::create([
+            $createdApplication = Application::create([
                 'student_id' => $student->id,
                 'scholarship_id' => $scholarship->id,
                 'student_gwa' => $student->current_gwa ?? 1.75,
                 'monthly_income' => $student->monthly_household_income ?? 0,
                 'status' => 'submitted',
                 'submitted_at' => now(),
+                'welfare_case_referral_id' => $referral?->id,
             ]);
 
             // Save document files securely in private storage
@@ -144,10 +155,10 @@ class ApplicationController extends Controller
                 if ($request->hasFile($fieldName)) {
                     $file = $request->file($fieldName);
                     $originalName = $file->getClientOriginalName();
-                    $path = $file->store("private/documents/{$application->id}", 'local');
+                    $path = $file->store("private/documents/{$createdApplication->id}", 'local');
 
                     ApplicationDocument::create([
-                        'application_id' => $application->id,
+                        'application_id' => $createdApplication->id,
                         'scholarship_requirement_id' => $docReq->id,
                         'doc_type' => $docReq->requirement_name,
                         'file_path' => $path,
@@ -158,6 +169,19 @@ class ApplicationController extends Controller
                 }
             }
         });
+
+        if ($createdApplication) {
+            // Notify Student User
+            if (Auth::user()) {
+                Auth::user()->notify(new \App\Notifications\ApplicationSubmittedNotification($createdApplication, false));
+            }
+
+            // Notify Admin Users
+            $admins = \App\Models\User::where('role', 'admin')->get();
+            foreach ($admins as $admin) {
+                $admin->notify(new \App\Notifications\ApplicationSubmittedNotification($createdApplication, true));
+            }
+        }
 
         return redirect()->route('student.applications.index')
             ->with('success', 'Your scholarship application and verified documents have been submitted successfully to CSU Lal-lo OSDW!');

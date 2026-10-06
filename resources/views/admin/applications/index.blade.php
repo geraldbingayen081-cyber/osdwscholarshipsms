@@ -68,68 +68,60 @@
         <!-- Header Section -->
         <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-                <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Student Applications</h1>
-                <p class="text-xs text-slate-500 font-medium mt-1">
+                <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Student Applications</h1>
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">
                     Review, verify documents, and approve or reject scholarship applications for CSU Lal-lo Campus.
                 </p>
             </div>
-
-            <a href="{{ route('admin.export.applications', request()->all()) }}" 
-               class="inline-flex items-center gap-2 px-4 py-2 bg-[#3B060F] text-white font-extrabold text-xs rounded-xl hover:bg-[#6B0F1A] transition shadow-md shrink-0 cursor-pointer">
-                <svg class="w-4 h-4 text-[#FFC107]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                Export Applications (CSV)
-            </a>
         </div>
 
         <!-- Metric Tabs Row -->
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
             <!-- All Applications -->
             <a href="{{ route('admin.applications.index') }}" 
-               class="p-4 rounded-xl border transition flex flex-col justify-between {{ empty($status) ? 'bg-[#3B060F] text-white border-[#3B060F] shadow-sm' : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300' }}">
-                <span class="text-[11px] font-bold uppercase tracking-wider {{ empty($status) ? 'text-[#FFC107]' : 'text-slate-500' }}">All Apps</span>
+               class="p-4 rounded-xl border transition flex flex-col justify-between {{ empty($status) ? 'bg-[#3B060F] text-white border-[#3B060F] shadow-sm' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700' }}">
+                <span class="text-[11px] font-bold uppercase tracking-wider {{ empty($status) ? 'text-[#FFC107]' : 'text-slate-500 dark:text-slate-400' }}">All Apps</span>
                 <span class="text-2xl font-extrabold mt-1" x-text="stats.total">{{ number_format($stats['total']) }}</span>
             </a>
 
             <!-- Submitted -->
             <a href="{{ route('admin.applications.index', array_merge(request()->except('page'), ['status' => 'submitted'])) }}" 
-               class="p-4 rounded-xl border transition flex flex-col justify-between {{ $status === 'submitted' ? 'bg-amber-600 text-white border-amber-600 shadow-sm' : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300' }}">
-                <span class="text-[11px] font-bold uppercase tracking-wider {{ $status === 'submitted' ? 'text-amber-100' : 'text-slate-500' }}">Submitted</span>
+               class="p-4 rounded-xl border transition flex flex-col justify-between {{ $status === 'submitted' ? 'bg-amber-600 text-white border-amber-600 shadow-sm' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700' }}">
+                <span class="text-[11px] font-bold uppercase tracking-wider {{ $status === 'submitted' ? 'text-amber-100' : 'text-slate-500 dark:text-slate-400' }}">Submitted</span>
                 <span class="text-2xl font-extrabold mt-1" x-text="stats.submitted">{{ number_format($stats['submitted']) }}</span>
             </a>
 
             <!-- Under Review -->
             <a href="{{ route('admin.applications.index', array_merge(request()->except('page'), ['status' => 'under_review'])) }}" 
-               class="p-4 rounded-xl border transition flex flex-col justify-between {{ $status === 'under_review' ? 'bg-blue-600 text-white border-blue-600 shadow-sm' : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300' }}">
-                <span class="text-[11px] font-bold uppercase tracking-wider {{ $status === 'under_review' ? 'text-blue-100' : 'text-slate-500' }}">Under Review</span>
+               class="p-4 rounded-xl border transition flex flex-col justify-between {{ $status === 'under_review' ? 'bg-blue-600 text-white border-blue-600 shadow-sm' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700' }}">
+                <span class="text-[11px] font-bold uppercase tracking-wider {{ $status === 'under_review' ? 'text-blue-100' : 'text-slate-500 dark:text-slate-400' }}">Under Review</span>
                 <span class="text-2xl font-extrabold mt-1" x-text="stats.under_review">{{ number_format($stats['under_review']) }}</span>
             </a>
 
             <!-- Incomplete -->
             <a href="{{ route('admin.applications.index', array_merge(request()->except('page'), ['status' => 'incomplete'])) }}" 
-               class="p-4 rounded-xl border transition flex flex-col justify-between {{ $status === 'incomplete' ? 'bg-rose-600 text-white border-rose-600 shadow-sm' : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300' }}">
-                <span class="text-[11px] font-bold uppercase tracking-wider {{ $status === 'incomplete' ? 'text-rose-100' : 'text-slate-500' }}">Incomplete</span>
+               class="p-4 rounded-xl border transition flex flex-col justify-between {{ $status === 'incomplete' ? 'bg-rose-600 text-white border-rose-600 shadow-sm' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700' }}">
+                <span class="text-[11px] font-bold uppercase tracking-wider {{ $status === 'incomplete' ? 'text-rose-100' : 'text-slate-500 dark:text-slate-400' }}">Incomplete</span>
                 <span class="text-2xl font-extrabold mt-1" x-text="stats.incomplete">{{ number_format($stats['incomplete']) }}</span>
             </a>
 
             <!-- Approved -->
             <a href="{{ route('admin.applications.index', array_merge(request()->except('page'), ['status' => 'approved'])) }}" 
-               class="p-4 rounded-xl border transition flex flex-col justify-between {{ $status === 'approved' ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm' : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300' }}">
-                <span class="text-[11px] font-bold uppercase tracking-wider {{ $status === 'approved' ? 'text-emerald-100' : 'text-slate-500' }}">Approved</span>
+               class="p-4 rounded-xl border transition flex flex-col justify-between {{ $status === 'approved' ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700' }}">
+                <span class="text-[11px] font-bold uppercase tracking-wider {{ $status === 'approved' ? 'text-emerald-100' : 'text-slate-500 dark:text-slate-400' }}">Approved</span>
                 <span class="text-2xl font-extrabold mt-1" x-text="stats.approved">{{ number_format($stats['approved']) }}</span>
             </a>
 
             <!-- Rejected -->
             <a href="{{ route('admin.applications.index', array_merge(request()->except('page'), ['status' => 'rejected'])) }}" 
-               class="p-4 rounded-xl border transition flex flex-col justify-between {{ $status === 'rejected' ? 'bg-slate-700 text-white border-slate-700 shadow-sm' : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300' }}">
-                <span class="text-[11px] font-bold uppercase tracking-wider {{ $status === 'rejected' ? 'text-slate-300' : 'text-slate-500' }}">Rejected</span>
+               class="p-4 rounded-xl border transition flex flex-col justify-between {{ $status === 'rejected' ? 'bg-slate-700 text-white border-slate-700 shadow-sm' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700' }}">
+                <span class="text-[11px] font-bold uppercase tracking-wider {{ $status === 'rejected' ? 'text-slate-300' : 'text-slate-500 dark:text-slate-400' }}">Rejected</span>
                 <span class="text-2xl font-extrabold mt-1" x-text="stats.rejected">{{ number_format($stats['rejected']) }}</span>
             </a>
         </div>
 
         <!-- Filters & Search Bar -->
-        <div class="bg-white rounded-2xl shadow-xs border border-slate-200 p-4 mb-6">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-200 dark:border-slate-800 p-4 mb-6">
             <form method="GET" action="{{ route('admin.applications.index') }}" class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
                 @if($status)
                     <input type="hidden" name="status" value="{{ $status }}">
@@ -148,12 +140,12 @@
                            placeholder="Search student, ID, or scholarship..." 
                            {{ $search ? 'autofocus onfocus="this.setSelectionRange(this.value.length, this.value.length)"' : '' }}
                            oninput="clearTimeout(window._searchTimer); window._searchTimer = setTimeout(() => this.form.submit(), 400)"
-                           class="w-full py-2 pl-9 pr-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
+                           class="w-full py-2 pl-9 pr-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
                 </div>
 
                 <!-- Scholarship Select Filter -->
                 <div class="sm:col-span-4">
-                    <select name="scholarship_id" onchange="this.form.submit()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 font-semibold focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
+                    <select name="scholarship_id" onchange="this.form.submit()" class="w-full py-2 px-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-700 dark:text-slate-200 font-semibold focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
                         <option value="">All Scholarship Programs</option>
                         @foreach($scholarships as $sch)
                             <option value="{{ $sch->id }}" {{ $scholarshipId == $sch->id ? 'selected' : '' }}>
@@ -165,7 +157,7 @@
 
                 <!-- Academic Year Select Filter -->
                 <div class="sm:col-span-3 flex items-center gap-2">
-                    <select name="academic_year_id" onchange="this.form.submit()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 font-semibold focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
+                    <select name="academic_year_id" onchange="this.form.submit()" class="w-full py-2 px-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-700 dark:text-slate-200 font-semibold focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
                         <option value="">All Academic Years</option>
                         @foreach($academicYears as $ay)
                             <option value="{{ $ay->id }}" {{ $academicYearId == $ay->id ? 'selected' : '' }}>
@@ -174,20 +166,20 @@
                         @endforeach
                     </select>
                     @if($search || $scholarshipId || $academicYearId || $status)
-                        <a href="{{ route('admin.applications.index') }}" class="px-2.5 py-1.5 text-xs font-bold text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition shrink-0" title="Reset Filters">Reset</a>
+                        <a href="{{ route('admin.applications.index') }}" class="px-2.5 py-1.5 text-xs font-bold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition shrink-0" title="Reset Filters">Reset</a>
                     @endif
                 </div>
             </form>
         </div>
 
         <!-- Applications Table Card -->
-        <div class="bg-white rounded-2xl shadow-xs border border-slate-200 overflow-hidden">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-200 dark:border-slate-800 overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs text-slate-600">
-                    <thead class="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase border-b border-slate-200">
+                <table class="w-full text-left text-xs text-slate-600 dark:text-slate-300">
+                    <thead class="bg-slate-100 dark:bg-slate-800 text-[11px] font-bold text-slate-700 dark:text-slate-200 uppercase border-b border-slate-200 dark:border-slate-700">
                         <tr>
                             <th class="px-4 py-3.5 w-10 text-center">
-                                <input type="checkbox" @change="toggleAll($event)" class="rounded border-slate-300 text-[#6B0F1A] focus:ring-[#6B0F1A] cursor-pointer">
+                                <input type="checkbox" @change="toggleAll($event)" class="rounded border-slate-300 dark:border-slate-600 text-[#6B0F1A] focus:ring-[#6B0F1A] cursor-pointer">
                             </th>
                             <th class="px-6 py-3.5">Student Information (Name / Student ID)</th>
                             <th class="px-6 py-3.5">Scholarship Program</th>
@@ -197,35 +189,35 @@
                             <th class="px-6 py-3.5 text-right">Action</th>
                         </tr>
                     </thead>
-                    <tbody id="applications-tbody" class="divide-y divide-slate-200">
+                    <tbody id="applications-tbody" class="divide-y divide-slate-200 dark:divide-slate-800">
                         @forelse($applications as $app)
-                            <tr id="app-row-{{ $app->id }}" class="hover:bg-slate-50 transition">
+                            <tr id="app-row-{{ $app->id }}" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/60 transition">
                                 <!-- Multi-Select Checkbox -->
                                 <td class="px-4 py-4 text-center">
-                                    <input type="checkbox" value="{{ $app->id }}" x-model="selectedIds" class="rounded border-slate-300 text-[#6B0F1A] focus:ring-[#6B0F1A] cursor-pointer">
+                                    <input type="checkbox" value="{{ $app->id }}" x-model="selectedIds" class="rounded border-slate-300 dark:border-slate-600 text-[#6B0F1A] focus:ring-[#6B0F1A] cursor-pointer">
                                 </td>
                                 <!-- Student Info -->
                                 <td class="px-6 py-4">
-                                    <div class="font-bold text-slate-900 text-sm">
+                                    <div class="font-bold text-slate-900 dark:text-white text-sm">
                                         {{ $app->student->user->full_name }}
                                     </div>
-                                    <div class="text-[11px] text-slate-500 font-mono">
+                                    <div class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
                                         {{ $app->student->student_number }} • {{ $app->student->course }}
                                     </div>
                                 </td>
 
                                 <!-- Scholarship -->
                                 <td class="px-6 py-4">
-                                    <div class="font-bold text-slate-800">
+                                    <div class="font-bold text-slate-800 dark:text-slate-200">
                                         {{ $app->scholarship->name }}
                                     </div>
-                                    <div class="text-[11px] text-slate-400 font-medium">
+                                    <div class="text-[11px] text-slate-400 dark:text-slate-500 font-medium">
                                         {{ $app->scholarship->academicYear->name ?? 'AY N/A' }}
                                     </div>
                                 </td>
 
                                 <!-- Submitted At -->
-                                <td class="px-6 py-4 font-medium text-slate-600">
+                                <td class="px-6 py-4 font-medium text-slate-600 dark:text-slate-400">
                                     {{ $app->submitted_at ? $app->submitted_at->format('M d, Y • h:i A') : 'N/A' }}
                                 </td>
 
@@ -236,11 +228,11 @@
                                         $totalDocs = $app->documents->count();
                                         $needsResubmit = $app->documents->where('status', 'needs_resubmission')->count();
                                     @endphp
-                                    <div class="text-xs font-bold text-slate-700">
+                                    <div class="text-xs font-bold text-slate-700 dark:text-slate-300">
                                         {{ $verifiedDocs }} / {{ $totalDocs }} Verified
                                     </div>
                                     @if($needsResubmit > 0)
-                                        <span class="text-[10px] font-bold text-rose-600">
+                                        <span class="text-[10px] font-bold text-rose-600 dark:text-rose-400">
                                             {{ $needsResubmit }} document(s) flagged
                                         </span>
                                     @endif
@@ -249,11 +241,11 @@
                                 <!-- Application Status Badge -->
                                 <td class="px-6 py-4">
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider
-                                        @if($app->status === 'approved') bg-emerald-100 text-emerald-800 border border-emerald-300
-                                        @elseif($app->status === 'rejected') bg-slate-200 text-slate-800 border border-slate-300
-                                        @elseif($app->status === 'incomplete') bg-rose-100 text-rose-800 border border-rose-300
-                                        @elseif($app->status === 'under_review') bg-blue-100 text-blue-800 border border-blue-300
-                                        @else bg-amber-100 text-amber-800 border border-amber-300 @endif">
+                                        @if($app->status === 'approved') bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800
+                                        @elseif($app->status === 'rejected') bg-slate-100 text-slate-700 border border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700
+                                        @elseif($app->status === 'incomplete') bg-rose-100 text-rose-800 border border-rose-300 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-800
+                                        @elseif($app->status === 'under_review') bg-blue-100 text-blue-800 border border-blue-300 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-800
+                                        @else bg-amber-100 text-amber-800 border border-amber-300 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800 @endif">
                                         {{ str_replace('_', ' ', $app->status) }}
                                     </span>
                                 </td>
@@ -282,8 +274,8 @@
                             </tr>
                         @empty
                             <tr id="empty-state-row">
-                                <td colspan="6" class="px-6 py-12 text-center text-slate-500 text-xs">
-                                    <svg class="w-10 h-10 text-slate-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <td colspan="6" class="px-6 py-12 text-center text-slate-500 dark:text-slate-400 text-xs">
+                                    <svg class="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                     </svg>
                                     No student applications match your filter criteria.
@@ -291,8 +283,8 @@
                             </tr>
                         @endforelse
                         <tr id="empty-state-row" class="hidden">
-                            <td colspan="6" class="px-6 py-12 text-center text-slate-500 text-xs">
-                                <svg class="w-10 h-10 text-slate-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <td colspan="6" class="px-6 py-12 text-center text-slate-500 dark:text-slate-400 text-xs">
+                                <svg class="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                 </svg>
                                 All pending applications processed! No applications remaining in queue.
@@ -303,7 +295,7 @@
             </div>
 
             @if($applications->hasPages())
-                <div class="px-6 py-4 border-t border-slate-200 bg-slate-50">
+                <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
                     {{ $applications->links() }}
                 </div>
             @endif
@@ -388,4 +380,4 @@
 
     </div>
 
-</x-app-layout>out>
+</x-app-layout>

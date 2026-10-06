@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\SystemLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
@@ -60,12 +61,29 @@ class LoginController extends Controller
         if ($user && Auth::attempt(['email' => $user->email, 'password' => $password], $remember)) {
             $request->session()->regenerate();
 
+            SystemLog::record(
+                'Authentication',
+                'login',
+                "User {$user->full_name} ({$user->email}) logged in successfully.",
+                $user,
+                ['role' => $user->role, 'login_id' => $loginInput],
+                $user
+            );
+
             if ($user->role === 'admin') {
                 return redirect()->intended(route('admin.dashboard'));
             }
 
             return redirect()->intended(route('student.dashboard'));
         }
+
+        SystemLog::record(
+            'Authentication',
+            'failed_login',
+            "Failed login attempt for identifier: '{$loginInput}'.",
+            null,
+            ['identifier' => $loginInput]
+        );
 
         throw ValidationException::withMessages([
             'login_id' => __('auth.failed'),
@@ -78,6 +96,19 @@ class LoginController extends Controller
      */
     public function destroy(Request $request)
     {
+        $user = Auth::user();
+
+        if ($user) {
+            SystemLog::record(
+                'Authentication',
+                'logout',
+                "User {$user->full_name} ({$user->email}) logged out.",
+                $user,
+                ['role' => $user->role],
+                $user
+            );
+        }
+
         Auth::logout();
 
         $request->session()->invalidate();

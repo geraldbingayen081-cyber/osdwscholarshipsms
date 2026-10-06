@@ -5,7 +5,7 @@
         college: '{{ old('college', $student->college?->value ?? 'CICS') }}',
         program: '{{ old('program', $student->program ?? $student->course ?? '') }}',
         programsByCollege: {
-            'CAg': [
+            'COA': [
                 'BS Agriculture (Crop Science)',
                 'BS Agriculture (Animal Science)',
                 'DAT-BAT (Diploma/Bachelor in Agricultural Tech)'
@@ -16,7 +16,7 @@
             'CICS': [
                 'BS Information Technology (BSIT)'
             ],
-            'CTE': [
+            'CTED': [
                 'Bachelor of Elementary Education (BEEd)',
                 'BSEd - English',
                 'BSEd - Mathematics',
@@ -98,10 +98,10 @@
                     <div>
                         <label class="block text-slate-700 font-bold mb-1">CSU Lal-lo College <span class="text-red-500">*</span></label>
                         <select name="college" x-model="college" @change="program = availablePrograms[0]" class="w-full py-2.5 px-3 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#7B1113]">
-                            <option value="CAg">CAg - College of Agriculture</option>
-                            <option value="CHM">CHM - College of Hospitality Management</option>
                             <option value="CICS">CICS - College of Information & Computing Sciences</option>
-                            <option value="CTE">CTE - College of Teacher Education</option>
+                            <option value="COA">COA - College of Agriculture</option>
+                            <option value="CTED">CTED - College of Teacher Education</option>
+                            <option value="CHM">CHM - College of Hospitality Management</option>
                         </select>
                     </div>
 

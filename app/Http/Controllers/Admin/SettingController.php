@@ -152,6 +152,19 @@ class SettingController extends Controller
             SystemSetting::set('system_logo_path', $path);
         }
 
+        \App\Models\SystemLog::record(
+            'Settings',
+            'settings_update',
+            "Updated system institutional information and branding ({$validated['institution_name']} - {$validated['campus_name']}).",
+            null,
+            [
+                'system_name' => $validated['system_name'],
+                'institution_name' => $validated['institution_name'],
+                'campus_name' => $validated['campus_name'],
+                'office_name' => $validated['office_name'],
+            ]
+        );
+
         return redirect()->route('admin.settings.index')
             ->with('success', 'System branding and institutional settings updated successfully.');
     }

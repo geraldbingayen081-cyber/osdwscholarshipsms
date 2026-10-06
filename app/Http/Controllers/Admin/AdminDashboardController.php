@@ -21,6 +21,7 @@ class AdminDashboardController extends Controller
             'pending_applications' => Application::whereIn('status', ['submitted', 'under_review'])->count(),
             'approved_applications' => Application::where('status', 'approved')->count(),
             'active_scholars' => Scholar::where('status', 'active')->count(),
+            'open_welfare_cases' => \App\Models\WelfareCase::whereIn('status', ['Open', 'Under Assessment'])->count(),
         ];
 
         $recentApplications = Application::with(['student.user', 'scholarship'])

@@ -154,6 +154,20 @@ class ScholarshipController extends Controller
 
         $scholarship = Scholarship::create($validated);
 
+        \App\Models\SystemLog::record(
+            'Scholarship',
+            'create',
+            "Created scholarship program '{$scholarship->name}' (Provider: {$scholarship->provider}, Slots: {$scholarship->available_slots}).",
+            $scholarship,
+            [
+                'name' => $scholarship->name,
+                'provider' => $scholarship->provider,
+                'school_year' => $scholarship->school_year,
+                'slots' => $scholarship->available_slots,
+                'status' => $scholarship->status,
+            ]
+        );
+
         return redirect()->route('admin.scholarships.show', $scholarship->id)
             ->with('success', 'Scholarship created successfully. You may now add requirements.');
     }
@@ -234,6 +248,18 @@ class ScholarshipController extends Controller
 
         $scholarship->update($validated);
 
+        \App\Models\SystemLog::record(
+            'Scholarship',
+            'update',
+            "Updated scholarship program details for '{$scholarship->name}'.",
+            $scholarship,
+            [
+                'name' => $scholarship->name,
+                'school_year' => $scholarship->school_year,
+                'status' => $scholarship->status,
+            ]
+        );
+
         return redirect()->route('admin.scholarships.show', $scholarship->id)
             ->with('success', 'Scholarship details updated successfully.');
     }
@@ -247,7 +273,19 @@ class ScholarshipController extends Controller
             'status' => ['required', Rule::in(['draft', 'open', 'closed', 'archived'])],
         ]);
 
+        $oldStatus = $scholarship->status;
         $scholarship->update($validated);
+
+        \App\Models\SystemLog::record(
+            'Scholarship',
+            'status_change',
+            "Changed scholarship '{$scholarship->name}' status from {$oldStatus} to {$validated['status']}.",
+            $scholarship,
+            [
+                'old_status' => $oldStatus,
+                'new_status' => $validated['status'],
+            ]
+        );
 
         return back()->with('success', "Scholarship status changed to " . ucfirst($validated['status']) . ".");
     }
@@ -258,7 +296,16 @@ class ScholarshipController extends Controller
     public function destroy(Scholarship $scholarship)
     {
         $scholarshipName = $scholarship->name;
+        $scholarshipId = $scholarship->id;
         $scholarship->delete();
+
+        \App\Models\SystemLog::record(
+            'Scholarship',
+            'delete',
+            "Deleted scholarship program '{$scholarshipName}' (ID: {$scholarshipId}).",
+            null,
+            ['scholarship_id' => $scholarshipId, 'name' => $scholarshipName]
+        );
 
         return redirect()->route('admin.scholarships.index')
             ->with('success', "Scholarship \"{$scholarshipName}\" was deleted successfully.");

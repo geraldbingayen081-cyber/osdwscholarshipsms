@@ -170,6 +170,16 @@
                                     </button>
                                 </div>
                             @endforeach
+                        @elseif(!$scholar->application)
+                            <div class="text-center py-6 px-4 text-slate-500 text-xs bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                                <div class="inline-flex items-center gap-1.5 font-bold text-slate-800 text-xs mb-1">
+                                    <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    Direct Institutional Grantee
+                                </div>
+                                <p class="text-slate-400 text-[11px]">This scholar was enrolled directly by an administrator without requiring an initial application submission.</p>
+                            </div>
                         @else
                             <div class="text-center py-6 text-slate-500 text-xs">
                                 No submitted documents registered for this scholar.

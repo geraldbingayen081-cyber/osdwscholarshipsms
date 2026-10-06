@@ -101,10 +101,10 @@ class ApplicationResource extends Resource
                     ->badge()
                     ->formatStateUsing(fn ($state) => $state instanceof College ? $state->value : ($state ?? 'N/A'))
                     ->color(fn ($state): string => match($state instanceof College ? $state->value : $state) {
-                        'CAg' => 'primary',
+                        'COA' => 'primary',
                         'CHM' => 'warning',
                         'CICS' => 'info',
-                        'CTE' => 'success',
+                        'CTED' => 'success',
                         default => 'gray',
                     }),
 

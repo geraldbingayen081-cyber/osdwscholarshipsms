@@ -4,25 +4,25 @@ namespace App\Enums;
 
 enum College: string
 {
-    case CAG = 'CAg';
+    case COA = 'COA';
     case CHM = 'CHM';
     case CICS = 'CICS';
-    case CTE = 'CTE';
+    case CTED = 'CTED';
 
     public function name(): string
     {
         return match($this) {
-            self::CAG => 'College of Agriculture',
-            self::CHM => 'College of Hospitality Management',
-            self::CICS => 'College of Information and Computing Sciences',
-            self::CTE => 'College of Teacher Education',
+            self::COA => 'College of Agriculture (COA)',
+            self::CHM => 'College of Hospitality Management (CHM)',
+            self::CICS => 'College of Information and Computing Sciences (CICS)',
+            self::CTED => 'College of Teacher Education (CTED)',
         };
     }
 
     public function programs(): array
     {
         return match($this) {
-            self::CAG => [
+            self::COA => [
                 'BS Agriculture (Crop Science)',
                 'BS Agriculture (Animal Science)',
                 'Diploma in Agricultural Technology - Bachelor in Agricultural Technology (DAT-BAT)',
@@ -33,7 +33,7 @@ enum College: string
             self::CICS => [
                 'BS Information Technology (BSIT)',
             ],
-            self::CTE => [
+            self::CTED => [
                 'Bachelor of Elementary Education (BEEd)',
                 'Bachelor of Secondary Education - English (BSEd-ENG)',
                 'Bachelor of Secondary Education - Mathematics (BSEd-MATH)',
