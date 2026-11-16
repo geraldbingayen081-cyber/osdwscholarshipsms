@@ -8,10 +8,10 @@ php artisan storage:link || true
 echo "Running database migrations..."
 php artisan migrate --force || true
 
-# Seed database if seeded flag is not set or requested
-if [ "$RUN_SEEDER" = "true" ]; then
-    echo "Running database seeders..."
-    php artisan db:seed --force || true
+# Seed database with TestDataSeeder on startup (unless RUN_SEEDER is explicitly set to "false")
+if [ "$RUN_SEEDER" != "false" ]; then
+    echo "Running TestDataSeeder..."
+    php artisan db:seed --class=TestDataSeeder --force || true
 fi
 
 # Clear and optimize Laravel caches for production
