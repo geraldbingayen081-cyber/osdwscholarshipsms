@@ -80,7 +80,7 @@
             <!-- All Applications -->
             <a href="{{ route('admin.applications.index') }}" 
                class="p-4 rounded-xl border transition flex flex-col justify-between {{ empty($status) ? 'bg-[#3B060F] text-white border-[#3B060F] shadow-sm' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700' }}">
-                <span class="text-[11px] font-bold uppercase tracking-wider {{ empty($status) ? 'text-[#FFC107]' : 'text-slate-500 dark:text-slate-400' }}">All Apps</span>
+                <span class="text-[11px] font-bold uppercase tracking-wider {{ empty($status) ? 'text-[#FFC107]' : 'text-slate-500 dark:text-slate-400' }}">All Application</span>
                 <span class="text-2xl font-extrabold mt-1" x-text="stats.total">{{ number_format($stats['total']) }}</span>
             </a>
 
@@ -138,8 +138,8 @@
                            name="search" 
                            value="{{ $search }}" 
                            placeholder="Search student, ID, or scholarship..." 
-                           {{ $search ? 'autofocus onfocus="this.setSelectionRange(this.value.length, this.value.length)"' : '' }}
-                           oninput="clearTimeout(window._searchTimer); window._searchTimer = setTimeout(() => this.form.submit(), 400)"
+                           @if($search) autofocus onfocus="this.setSelectionRange(this.value.length, this.value.length)" @endif
+                           oninput="window.triggerLiveSearch ? window.triggerLiveSearch(this.form) : (clearTimeout(window._searchTimer), window._searchTimer = setTimeout(() => this.form.submit(), 500))"
                            class="w-full py-2 pl-9 pr-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
                 </div>
 
@@ -253,7 +253,7 @@
                                 <!-- Action Buttons -->
                                 <td class="px-6 py-4 text-right flex items-center justify-end gap-2">
                                     @if($app->status !== 'approved')
-                                        <button type="button" 
+                                        <!--<button type="button" 
                                                 @click="approveApp({{ $app->id }}, '{{ addslashes($app->student->user->full_name) }}', '{{ csrf_token() }}')"
                                                 class="inline-flex items-center px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs transition shadow-xs cursor-pointer"
                                                 title="Quick Approve & Move to Active Scholars">
@@ -261,7 +261,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                             </svg>
                                             Approve
-                                        </button>
+                                        </button>-->
                                     @endif
                                     <a href="{{ route('admin.applications.show', $app->id) }}" 
                                        class="inline-flex items-center px-3.5 py-1.5 bg-[#3B060F] text-white font-bold rounded-lg text-xs hover:bg-[#6B0F1A] transition shadow-xs">

@@ -17,8 +17,8 @@
                        name="search" 
                        value="{{ $search }}" 
                        placeholder="Search scholarship name or provider..." 
-                       {{ $search ? 'autofocus onfocus="this.setSelectionRange(this.value.length, this.value.length)"' : '' }}
-                       oninput="clearTimeout(window._searchTimer); window._searchTimer = setTimeout(() => this.form.submit(), 400)"
+                       @if($search) autofocus onfocus="this.setSelectionRange(this.value.length, this.value.length)" @endif
+                       oninput="window.triggerLiveSearch ? window.triggerLiveSearch(this.form) : (clearTimeout(window._searchTimer), window._searchTimer = setTimeout(() => this.form.submit(), 500))"
                        class="w-full py-2 pl-9 pr-8 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none shadow-2xs">
                 @if($search)
                     <a href="{{ route('student.scholarships.index') }}" class="absolute right-2.5 text-slate-400 hover:text-slate-700" title="Clear Search">

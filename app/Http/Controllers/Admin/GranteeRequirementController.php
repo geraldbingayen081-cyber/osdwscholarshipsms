@@ -25,7 +25,7 @@ class GranteeRequirementController extends Controller
             $scholarship->total_grantees  = $scholarIds->count();
 
             $scholarship->total_approved  = ScholarRenewal::whereIn('scholar_id', $scholarIds)
-                ->where('status', 'approved')
+                ->whereIn('status', ['approved', 'verified'])
                 ->distinct('scholar_id')->count('scholar_id');
 
             $scholarship->total_resubmit  = ScholarRenewal::whereIn('scholar_id', $scholarIds)

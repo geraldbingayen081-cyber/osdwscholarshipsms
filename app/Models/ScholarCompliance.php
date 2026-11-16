@@ -45,10 +45,14 @@ class ScholarCompliance extends Model
      */
     public function recalculateStatus(): string
     {
-        $this->loadMissing(['complianceRequest.requirements', 'documents']);
+        $this->load(['complianceRequest.requirements', 'documents', 'scholar']);
 
         $requirements = $this->complianceRequest->requirements;
-        $totalRequired = $requirements->where('is_required', true)->count();
+        $requiredItems = $requirements->where('is_required', true);
+        if ($requiredItems->isEmpty()) {
+            $requiredItems = $requirements;
+        }
+        $totalRequired = $requiredItems->count();
         $docs = $this->documents;
 
         if ($docs->isEmpty()) {
@@ -61,9 +65,9 @@ class ScholarCompliance extends Model
             return $newStatus;
         }
 
-        // Check if any document needs correction
+        // Check if any document needs correction or was rejected
         $hasNeedsCorrection = $docs->contains(function ($doc) {
-            return $doc->verification_status === 'needs_correction';
+            return in_array($doc->verification_status, ['needs_correction', 'rejected']);
         });
 
         if ($hasNeedsCorrection) {
@@ -74,33 +78,35 @@ class ScholarCompliance extends Model
 
         // Count verified required documents
         $verifiedRequiredCount = 0;
-        foreach ($requirements as $req) {
-            if ($req->is_required) {
-                $doc = $docs->firstWhere('compliance_requirement_id', $req->id);
-                if ($doc && $doc->verification_status === 'verified') {
-                    $verifiedRequiredCount++;
-                }
+        foreach ($requiredItems as $req) {
+            $doc = $docs->where('compliance_requirement_id', $req->id)
+                ->firstWhere('verification_status', 'verified');
+            if ($doc) {
+                $verifiedRequiredCount++;
             }
         }
 
-        // If all required documents are verified -> Completed!
+        // If all required documents are verified -> Completed (Approved)!
         if ($totalRequired > 0 && $verifiedRequiredCount >= $totalRequired) {
             $newStatus = 'completed';
             $this->update([
                 'status' => $newStatus,
                 'completed_at' => $this->completed_at ?? now(),
             ]);
+
+            if ($this->scholar && $this->scholar->status === 'for_renewal') {
+                $this->scholar->update(['status' => 'active']);
+            }
+
             return $newStatus;
         }
 
         // If all required documents have been uploaded -> Submitted / Under Review
         $uploadedRequiredCount = 0;
-        foreach ($requirements as $req) {
-            if ($req->is_required) {
-                $doc = $docs->firstWhere('compliance_requirement_id', $req->id);
-                if ($doc) {
-                    $uploadedRequiredCount++;
-                }
+        foreach ($requiredItems as $req) {
+            $doc = $docs->firstWhere('compliance_requirement_id', $req->id);
+            if ($doc) {
+                $uploadedRequiredCount++;
             }
         }
 

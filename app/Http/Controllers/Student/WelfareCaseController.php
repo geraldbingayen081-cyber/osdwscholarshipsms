@@ -29,7 +29,7 @@ class WelfareCaseController extends Controller
         $student = Auth::user()->student;
 
         $request->validate([
-            'category' => 'required|string|max:255',
+            'category' => ['required', 'string', \Illuminate\Validation\Rule::in(WelfareCase::CATEGORIES)],
             'description' => 'required|string',
             'documents.*' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ]);

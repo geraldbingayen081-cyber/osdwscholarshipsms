@@ -138,8 +138,12 @@ class AuthenticationTest extends TestCase
         $response = $this->get('/login');
 
         $response->assertStatus(200);
-        $response->assertSee('Student ID', false);
+        $this->assertTrue(
+            str_contains($response->getContent(), 'StudentID or Email') ||
+            str_contains($response->getContent(), 'Student ID or Email')
+        );
         $response->assertSee('name="login_id"', false);
+        $response->assertSee('placeholder="e.g. 26-32424 or student@csu.edu.ph"', false);
     }
 
     public function test_authenticated_student_visiting_login_page_is_redirected_to_dashboard()

@@ -55,6 +55,19 @@ class ScholarRenewalController extends Controller
             $scholar->update(['status' => 'for_renewal']);
         });
 
+        \App\Models\SystemLog::record(
+            'Scholar',
+            'submit_renewal',
+            "Student submitted scholarship renewal document '{$file->getClientOriginalName()}' ({$validated['requirement_type']}) for {$scholar->scholarship->name}.",
+            $scholar,
+            [
+                'scholar_id' => $scholar->id,
+                'requirement_type' => $validated['requirement_type'],
+                'original_filename' => $file->getClientOriginalName(),
+            ],
+            auth()->user()
+        );
+
         return redirect()->route('student.dashboard')
             ->with('success', 'Scholarship renewal document uploaded successfully! Admin will review your submission.');
     }

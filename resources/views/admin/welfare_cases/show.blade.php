@@ -9,15 +9,8 @@
     ];
     $badgeClass = $statusColors[$welfareCase->status] ?? 'bg-slate-100 text-slate-800 border-slate-200';
 
-    $defaultOffice = match($welfareCase->category) {
-        'Guidance and Counseling' => 'University Guidance & Counseling Center',
-        'Medical / Health Concern' => 'Campus Clinic & Health Services',
-        'Academic Grievance' => 'College Dean / Department Chairperson',
-        'Student Conduct / Discipline' => 'Student Disciplinary Tribunal / Prefect of Discipline',
-        'Housing / Dormitory' => 'Campus Dormitory / Housing Office',
-        default => 'OSDW Student Welfare Division'
-    };
-    $defaultReferralType = $welfareCase->category === 'Financial Assistance' ? 'scholarship' : 'office';
+    $defaultOffice = \App\Models\WelfareCase::defaultOfficeForCategory($welfareCase->category);
+    $defaultReferralType = \App\Models\WelfareCase::defaultReferralTypeForCategory($welfareCase->category);
 @endphp
 
 <x-app-layout title="Welfare Case #{{ $welfareCase->case_id }} - CSU Lal-lo Admin">
@@ -146,12 +139,18 @@
                                     :disabled="referralType !== 'office'"
                                     :required="referralType === 'office'"
                                     class="w-full py-2.5 px-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-[#3B060F] outline-none">
+                                <option value="OSDW Scholarship & Financial Assistance Unit">OSDW Scholarship & Financial Assistance Unit</option>
+                                <option value="OSDW Student Assistantship In-Charge">OSDW Student Assistantship In-Charge</option>
+                                <option value="OSDW Student Mutual Aid Program (SMAP) Unit">OSDW Student Mutual Aid Program (SMAP) Unit</option>
+                                <option value="OSDW Student Development / Sports & Socio-Cultural Affairs">OSDW Student Development / Sports & Socio-Cultural Affairs</option>
+                                <option value="Office of Academic Affairs / OSDW Honors & Awards Committee">Office of Academic Affairs / OSDW Honors & Awards Committee</option>
+                                <option value="OSDW Student Organizations & Activities Unit (SOAU)">OSDW Student Organizations & Activities Unit (SOAU)</option>
+                                <option value="OSDW Student Welfare Division">OSDW Student Welfare Division</option>
                                 <option value="University Guidance & Counseling Center">University Guidance & Counseling Center</option>
                                 <option value="Campus Clinic & Health Services">Campus Clinic & Health Services</option>
                                 <option value="College Dean / Department Chairperson">College Dean / Department Chairperson</option>
                                 <option value="Student Disciplinary Tribunal / Prefect of Discipline">Student Disciplinary Tribunal / Prefect of Discipline</option>
                                 <option value="Campus Dormitory / Housing Office">Campus Dormitory / Housing Office</option>
-                                <option value="OSDW Student Welfare Division">OSDW Student Welfare Division</option>
                                 <option value="Office of Academic Affairs">Office of Academic Affairs</option>
                             </select>
                         </div>
@@ -438,60 +437,82 @@
 
         </div>
 
-        <!-- Document Inline Preview Modal -->
+        <!-- Document Inline Preview Modal (Full-Size Viewport matching Scholar Requirements) -->
         <div x-show="previewModal" 
              x-cloak
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 z-50 overflow-hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4"
              @keydown.escape.window="previewModal = false"
-             class="fixed inset-0 z-50 overflow-hidden bg-slate-950/80 backdrop-blur-sm flex flex-col items-center justify-center p-2 sm:p-6">
+             style="display: none;">
             
             <div @click.away="previewModal = false" 
-                 class="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-5xl h-[90vh] flex flex-col shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+                 class="bg-white dark:bg-slate-900 w-full max-w-5xl xl:max-w-6xl h-[88vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-slate-200 dark:border-slate-800">
                 
-                <!-- Modal Top Header -->
-                <div class="px-5 py-3.5 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between shrink-0">
+                <!-- Modal Top Header in CSU Maroon with Title & Explicit Close Button -->
+                <div class="px-6 py-4 bg-[#3B060F] text-white flex items-center justify-between border-b border-[#480913] shrink-0">
                     <div class="flex items-center space-x-3 overflow-hidden">
-                        <div class="h-8 w-8 rounded-lg bg-[#3B060F] text-[#FFC107] flex items-center justify-center shrink-0 font-bold text-xs">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="h-9 w-9 rounded-xl bg-white/10 flex items-center justify-center text-[#FFC107] shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                             </svg>
                         </div>
                         <div class="overflow-hidden">
-                            <h3 class="font-extrabold text-xs sm:text-sm text-slate-800 dark:text-slate-100 truncate" x-text="previewName">Document Preview</h3>
-                            <p class="text-[10px] text-slate-400">OSDW Secure Document Viewer</p>
+                            <h3 class="text-sm font-extrabold text-white truncate" x-text="previewName">Document Viewer</h3>
+                            <p class="text-[10px] text-[#FFC107] font-semibold">CSU Lal-lo OSDW Portal • System In-App Viewer</p>
                         </div>
                     </div>
 
                     <div class="flex items-center space-x-2">
                         <!-- Open in New Tab Button -->
-                        <a :href="previewUrl" target="_blank" class="px-3 py-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold text-xs rounded-xl transition inline-flex items-center gap-1.5">
+                        <a :href="previewUrl" target="_blank" class="px-3 py-1.5 bg-white/15 hover:bg-white/25 text-white font-bold text-xs rounded-xl transition inline-flex items-center gap-1.5 border border-white/20">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
                             </svg>
                             <span class="hidden sm:inline">New Tab</span>
                         </a>
 
-                        <!-- Close Button -->
-                        <button type="button" @click="previewModal = false" class="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-white rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        <!-- Explicit Red "Close" Button -->
+                        <button @click="previewModal = false" 
+                                type="button" 
+                                title="Close Viewer (Esc)"
+                                class="px-3.5 py-1.5 bg-red-600/90 hover:bg-red-600 text-white text-xs font-extrabold rounded-xl transition flex items-center gap-1.5 shadow-sm border border-red-500/40 cursor-pointer">
+                            <span>Close</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
                             </svg>
                         </button>
                     </div>
                 </div>
 
-                <!-- Preview Content Box -->
-                <div class="flex-1 bg-slate-100 dark:bg-slate-950 p-2 sm:p-4 overflow-auto flex items-center justify-center">
-                    <!-- PDF Viewer -->
+                <!-- Full Viewport Preview Body (Edge-to-Edge with Zero Padding) -->
+                <div class="flex-1 bg-slate-900 relative overflow-hidden flex items-center justify-center">
+                    <!-- PDF Viewer (Clean Embed without duplicate toolbars) -->
                     <template x-if="isPdf">
-                        <iframe :src="previewUrl" class="w-full h-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white" title="PDF Preview"></iframe>
+                        <iframe :src="previewUrl + '#toolbar=0&navpanes=0'" class="w-full h-full border-0 bg-white" title="PDF Document Viewer"></iframe>
                     </template>
 
                     <!-- Image Viewer -->
                     <template x-if="!isPdf">
-                        <div class="max-h-full max-w-full overflow-auto flex items-center justify-center p-2">
-                            <img :src="previewUrl" :alt="previewName" class="max-h-[80vh] max-w-full rounded-xl object-contain shadow-md border border-slate-200 dark:border-slate-800">
+                        <div class="w-full h-full p-4 flex items-center justify-center overflow-auto">
+                            <img :src="previewUrl" :alt="previewName" class="max-h-full max-w-full object-contain rounded-lg shadow-xl border border-slate-700 select-none pointer-events-none" oncontextmenu="return false;">
                         </div>
                     </template>
+                </div>
+
+                <!-- Modal Bottom Action Bar -->
+                <div class="px-6 py-3 bg-slate-100 dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs text-slate-600 dark:text-slate-300 shrink-0">
+                    <span class="font-medium flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
+                        Document View-Only Mode Active
+                    </span>
+                    <button @click="previewModal = false" type="button" class="px-4 py-1.5 bg-slate-800 dark:bg-slate-700 text-white font-extrabold rounded-xl hover:bg-slate-900 dark:hover:bg-slate-600 transition cursor-pointer">
+                        Close Viewer (Esc)
+                    </button>
                 </div>
 
             </div>

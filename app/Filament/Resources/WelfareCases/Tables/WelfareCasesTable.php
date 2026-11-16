@@ -74,12 +74,19 @@ class WelfareCasesTable
                         \Filament\Forms\Components\Select::make('referred_to_office')
                             ->label('University Office / Department')
                             ->options([
+                                'OSDW Scholarship & Financial Assistance Unit' => 'OSDW Scholarship & Financial Assistance Unit',
+                                'OSDW Student Assistantship In-Charge' => 'OSDW Student Assistantship In-Charge',
+                                'OSDW Student Mutual Aid Program (SMAP) Unit' => 'OSDW Student Mutual Aid Program (SMAP) Unit',
+                                'OSDW Student Development / Sports & Socio-Cultural Affairs' => 'OSDW Student Development / Sports & Socio-Cultural Affairs',
+                                'Office of Academic Affairs / OSDW Honors & Awards Committee' => 'Office of Academic Affairs / OSDW Honors & Awards Committee',
+                                'OSDW Student Organizations & Activities Unit (SOAU)' => 'OSDW Student Organizations & Activities Unit (SOAU)',
+                                'OSDW Student Welfare Division' => 'OSDW Student Welfare Division',
                                 'University Guidance & Counseling Center' => 'University Guidance & Counseling Center',
                                 'Campus Clinic & Health Services' => 'Campus Clinic & Health Services',
                                 'College Dean / Department Chairperson' => 'College Dean / Department Chairperson',
                                 'Student Disciplinary Tribunal / Prefect of Discipline' => 'Student Disciplinary Tribunal / Prefect of Discipline',
                                 'Campus Dormitory / Housing Office' => 'Campus Dormitory / Housing Office',
-                                'OSDW Student Welfare Division' => 'OSDW Student Welfare Division',
+                                'Office of Academic Affairs' => 'Office of Academic Affairs',
                             ])
                             ->visible(fn (\Filament\Forms\Get $get) => $get('referral_type') === 'office')
                             ->required(fn (\Filament\Forms\Get $get) => $get('referral_type') === 'office'),

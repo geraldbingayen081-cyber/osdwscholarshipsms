@@ -25,11 +25,11 @@
         <form method="POST" action="{{ route('login') }}" class="p-6 sm:p-8 space-y-6">
             @csrf
 
-            <!-- Student ID / Admin Email Address -->
+            <!-- StudentID or Email Address -->
             <div>
                 <div class="flex items-center justify-between mb-1">
                     <label for="login_id" class="block text-sm font-semibold text-slate-700 dark:text-slate-200">
-                        Student ID <span class="text-red-500">*</span>
+                        StudentID or Email <span class="text-red-500">*</span>
                     </label>
                     
                 </div>
@@ -42,7 +42,7 @@
                         required 
                         autofocus 
                         class="w-full px-4 py-2.5 rounded-lg border @if($errors->has('login_id') || $errors->has('email')) border-red-500 bg-red-50 dark:bg-red-950/40 @else border-slate-300 dark:border-slate-700 @endif bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-[#6B0F1A] focus:border-[#6B0F1A] text-sm transition font-medium"
-                        placeholder="e.g. 26-32424"
+                        placeholder="e.g. 26-32424 or student@csu.edu.ph"
                     >
                 </div>
                 @if($errors->has('login_id'))

@@ -17,24 +17,26 @@
     </div>
 
     <div x-data="{
-        category: '{{ old('category', 'Financial Assistance') }}',
+        category: '{{ old('category', \App\Models\WelfareCase::CATEGORY_SCHOLARSHIP) }}',
         documents: [{ id: 1 }],
         get placeholderText() {
             switch(this.category) {
-                case 'Financial Assistance':
-                    return 'Describe your current financial situation, specific need (e.g. tuition support, school project/materials, transportation allowance, daily meal relief), and household circumstances...';
-                case 'Guidance and Counseling':
-                    return 'Describe what you are currently experiencing (e.g. stress, anxiety, emotional difficulties, family or personal matters). All counseling requests are handled with strict confidentiality...';
-                case 'Medical / Health Concern':
-                    return 'Describe your health condition, medical emergency, clinic support needed, or illness that affects your attendance or academic participation...';
-                case 'Academic Grievance':
-                    return 'Specify the Subject/Course code, instructor (if applicable), and describe the academic concern (e.g. grading discrepancy, syllabus compliance, examination dispute, or attendance issue)...';
-                case 'Student Conduct / Discipline':
-                    return 'State the factual details of the incident: date, time, location, persons involved, and full description of the event or grievance...';
-                case 'Housing / Dormitory':
-                    return 'Specify your dormitory / boarding facility, room number, and the specific concern (e.g. maintenance defect, room transfer request, safety/security, boarding compliance)...';
+                case '{{ \App\Models\WelfareCase::CATEGORY_SCHOLARSHIP }}':
+                    return 'Describe your financial need (e.g. tuition support, school materials/practicum, daily transportation allowance, calamity relief) and household circumstances...';
+                case '{{ \App\Models\WelfareCase::CATEGORY_ASSISTANTSHIP }}':
+                    return 'State your college, year level, current GWA, preferred department or campus office for assignment, and available hours/schedule...';
+                case '{{ \App\Models\WelfareCase::CATEGORY_SMAP }}':
+                    return 'Describe the medical illness, accident, hospitalization, surgical need, or mutual aid benefit being requested. Please attach medical certificate or hospital records if available...';
+                case '{{ \App\Models\WelfareCase::CATEGORY_CO_CURRICULAR }}':
+                    return 'Provide details of the competition or event: name, level (campus, regional, national, international), awards/honors received, date, and organizing body...';
+                case '{{ \App\Models\WelfareCase::CATEGORY_TOPNOTCHERS }}':
+                    return 'Specify the Professional Regulation Commission (PRC) or Bar examination taken, rank/placing achieved, examination date, and rating...';
+                case '{{ \App\Models\WelfareCase::CATEGORY_ORG_ACCREDITATION }}':
+                    return 'Specify the name of the student organization, category (academic, socio-cultural, religious, special interest), officer roster status, and submitted constitution/by-laws...';
+                case '{{ \App\Models\WelfareCase::CATEGORY_ORG_ADVISING }}':
+                    return 'Describe the specific consultation, activity clearance, adviser appointment, event permit, or technical advising needed for your recognized student organization...';
                 default:
-                    return 'Please describe your concern or situation in detail so OSDW can properly evaluate and assist you...';
+                    return 'Please describe your request or concern in detail so OSDW can properly evaluate and assist you...';
             }
         }
     }" class="bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-200 dark:border-slate-800 overflow-hidden max-w-3xl">
@@ -45,20 +47,16 @@
             <!-- Category Selection -->
             <div>
                 <label for="category" class="block text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
-                    Concern Category <span class="text-red-500">*</span>
+                    Service / Welfare Category <span class="text-red-500">*</span>
                 </label>
                 <select name="category" 
                         id="category" 
                         x-model="category"
                         required 
                         class="w-full py-2.5 px-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-[#3B060F] outline-none transition">
-                    <option value="Financial Assistance">Financial Assistance</option>
-                    <option value="Guidance and Counseling">Guidance and Counseling</option>
-                    <option value="Medical / Health Concern">Medical / Health Concern</option>
-                    <option value="Academic Grievance">Academic Grievance</option>
-                    <option value="Student Conduct / Discipline">Student Conduct / Discipline</option>
-                    <option value="Housing / Dormitory">Housing / Dormitory</option>
-                    <option value="Other">Other Welfare Concern</option>
+                    @foreach(\App\Models\WelfareCase::CATEGORIES as $cat)
+                        <option value="{{ $cat }}">{{ $cat }}</option>
+                    @endforeach
                 </select>
                 @error('category') <p class="mt-1 text-xs text-rose-500 font-semibold">{{ $message }}</p> @enderror
             </div>
@@ -66,85 +64,90 @@
             <!-- Dynamic Category Guidance Banner -->
             <div class="p-4 rounded-xl border text-xs leading-relaxed transition-all"
                  :class="{
-                    'bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-200': category === 'Financial Assistance',
-                    'bg-purple-50 dark:bg-purple-950/40 border-purple-200 dark:border-purple-800 text-purple-900 dark:text-purple-200': category === 'Guidance and Counseling',
-                    'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800 text-rose-900 dark:text-rose-200': category === 'Medical / Health Concern',
-                    'bg-blue-50 dark:bg-blue-950/40 border-blue-200 dark:border-blue-800 text-blue-900 dark:text-blue-200': category === 'Academic Grievance',
-                    'bg-slate-100 dark:bg-slate-800/80 border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200': category === 'Student Conduct / Discipline',
-                    'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200': category === 'Housing / Dormitory',
-                    'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300': category === 'Other'
+                    'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200': category === '{{ \App\Models\WelfareCase::CATEGORY_SCHOLARSHIP }}',
+                    'bg-blue-50 dark:bg-blue-950/40 border-blue-200 dark:border-blue-800 text-blue-900 dark:text-blue-200': category === '{{ \App\Models\WelfareCase::CATEGORY_ASSISTANTSHIP }}',
+                    'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800 text-rose-900 dark:text-rose-200': category === '{{ \App\Models\WelfareCase::CATEGORY_SMAP }}',
+                    'bg-purple-50 dark:bg-purple-950/40 border-purple-200 dark:border-purple-800 text-purple-900 dark:text-purple-200': category === '{{ \App\Models\WelfareCase::CATEGORY_CO_CURRICULAR }}',
+                    'bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-200': category === '{{ \App\Models\WelfareCase::CATEGORY_TOPNOTCHERS }}',
+                    'bg-cyan-50 dark:bg-cyan-950/40 border-cyan-200 dark:border-cyan-800 text-cyan-900 dark:text-cyan-200': category === '{{ \App\Models\WelfareCase::CATEGORY_ORG_ACCREDITATION }}',
+                    'bg-indigo-50 dark:bg-indigo-950/40 border-indigo-200 dark:border-indigo-800 text-indigo-900 dark:text-indigo-200': category === '{{ \App\Models\WelfareCase::CATEGORY_ORG_ADVISING }}'
                  }">
                 
-                <template x-if="category === 'Financial Assistance'">
+                <template x-if="category === '{{ \App\Models\WelfareCase::CATEGORY_SCHOLARSHIP }}'">
                     <div class="space-y-1">
                         <p class="font-extrabold flex items-center gap-1.5">
-                            <span>💰</span> Financial Assistance Information
+                            <span>🎓</span> Scholarship and Financial Assistance
                         </p>
                         <p class="text-[11px] opacity-90">
-                            OSDW can assess your situation for institutional aid or endorse your profile for open <strong>Scholarship Programs</strong>. Uploading Certificate of Indigency, payslips, or utility bills helps expedite evaluation.
+                            OSDW evaluates cases for institutional financial aid and official endorsements to active <strong>Scholarship Programs</strong>. Uploading your Certificate of Indigency, payslips, or utility bills helps expedite evaluation.
                         </p>
                     </div>
                 </template>
 
-                <template x-if="category === 'Guidance and Counseling'">
-                    <div class="space-y-1">
-                        <p class="font-extrabold flex items-center gap-1.5 text-purple-900 dark:text-purple-200">
-                            <span>🔒</span> Confidential Support
-                        </p>
-                        <p class="text-[11px] opacity-90">
-                            Your well-being is our utmost priority. All reported personal and mental health concerns are kept strictly confidential between you and certified University Guidance Counselors.
-                        </p>
-                    </div>
-                </template>
-
-                <template x-if="category === 'Medical / Health Concern'">
-                    <div class="space-y-1">
-                        <p class="font-extrabold flex items-center gap-1.5 text-rose-900 dark:text-rose-200">
-                            <span>🏥</span> Medical & Health Assistance
-                        </p>
-                        <p class="text-[11px] opacity-90">
-                            For medical emergencies or assistance with campus clinic coordination, please describe your current condition. You may optionally attach doctor certificates, prescriptions, or laboratory slips.
-                        </p>
-                    </div>
-                </template>
-
-                <template x-if="category === 'Academic Grievance'">
-                    <div class="space-y-1">
-                        <p class="font-extrabold flex items-center gap-1.5 text-blue-900 dark:text-blue-200">
-                            <span>📚</span> Academic Grievance & Conciliation
-                        </p>
-                        <p class="text-[11px] opacity-90">
-                            Please provide the Subject Code, Section, and specific grievance details. OSDW will facilitate an objective coordination with your College Dean or Department Chairperson.
-                        </p>
-                    </div>
-                </template>
-
-                <template x-if="category === 'Student Conduct / Discipline'">
+                <template x-if="category === '{{ \App\Models\WelfareCase::CATEGORY_ASSISTANTSHIP }}'">
                     <div class="space-y-1">
                         <p class="font-extrabold flex items-center gap-1.5">
-                            <span>⚖️</span> Student Discipline & Rights
+                            <span>💼</span> Student Assistantship Program
                         </p>
                         <p class="text-[11px] opacity-90">
-                            Please provide accurate and factual details regarding the incident. Cases are reviewed in compliance with the CSU Student Handbook and Student Disciplinary Tribunal guidelines.
+                            Deserving students may be placed in academic or administrative departments as Student Assistants. Please attach your Certificate of Registration (COR) and official semester class schedule.
                         </p>
                     </div>
                 </template>
 
-                <template x-if="category === 'Housing / Dormitory'">
+                <template x-if="category === '{{ \App\Models\WelfareCase::CATEGORY_SMAP }}'">
                     <div class="space-y-1">
-                        <p class="font-extrabold flex items-center gap-1.5 text-emerald-900 dark:text-emerald-200">
-                            <span>🏠</span> Dormitory & Boarding Concerns
+                        <p class="font-extrabold flex items-center gap-1.5">
+                            <span>🛡️</span> Student Mutual Aid Program (SMAP)
                         </p>
                         <p class="text-[11px] opacity-90">
-                            State your campus dorm or accredited boarding house name and room number. OSDW coordinates with Dormitory Managers to address safety, facilities, or boarding disputes.
+                            Provides emergency assistance for student illness, hospitalization, accidental injury, or bereavement support. Please attach physician medical certificates, diagnostic laboratory reports, or hospital billing statements.
                         </p>
                     </div>
                 </template>
 
-                <template x-if="category === 'Other'">
-                    <p class="font-medium text-[11px]">
-                        Please explain your concern so the OSDW team can assist or refer you to the appropriate university office.
-                    </p>
+                <template x-if="category === '{{ \App\Models\WelfareCase::CATEGORY_CO_CURRICULAR }}'">
+                    <div class="space-y-1">
+                        <p class="font-extrabold flex items-center gap-1.5">
+                            <span>🏆</span> Co-Curricular Programs Incentives
+                        </p>
+                        <p class="text-[11px] opacity-90">
+                            Incentives and institutional recognition for students excelling in recognized regional, national, or international athletic, socio-cultural, and academic competitions. Attach proof of certificate or event results.
+                        </p>
+                    </div>
+                </template>
+
+                <template x-if="category === '{{ \App\Models\WelfareCase::CATEGORY_TOPNOTCHERS }}'">
+                    <div class="space-y-1">
+                        <p class="font-extrabold flex items-center gap-1.5">
+                            <span>⭐</span> Incentives for National Topnotchers in Board Examinations
+                        </p>
+                        <p class="text-[11px] opacity-90">
+                            Official cash incentives and citations for CSU Lal-lo graduates achieving Top 10 rank in PRC Licensure Examinations. Attach copy of PRC Board Rating and official PRC press release.
+                        </p>
+                    </div>
+                </template>
+
+                <template x-if="category === '{{ \App\Models\WelfareCase::CATEGORY_ORG_ACCREDITATION }}'">
+                    <div class="space-y-1">
+                        <p class="font-extrabold flex items-center gap-1.5">
+                            <span>🏛️</span> Student Organizations Accreditation / Re-Accreditation
+                        </p>
+                        <p class="text-[11px] opacity-90">
+                            Official recognition application for campus student organizations. Please upload your Constitution and By-Laws, List of Officers, Action Plan, and Faculty Adviser Acceptance Form.
+                        </p>
+                    </div>
+                </template>
+
+                <template x-if="category === '{{ \App\Models\WelfareCase::CATEGORY_ORG_ADVISING }}'">
+                    <div class="space-y-1">
+                        <p class="font-extrabold flex items-center gap-1.5">
+                            <span>🧭</span> Advising of Student Organizations
+                        </p>
+                        <p class="text-[11px] opacity-90">
+                            Consultation, activity clearance endorsements, leadership advising, and conflict resolution managed by the Student Organizations & Activities Unit (SOAU).
+                        </p>
+                    </div>
                 </template>
             </div>
 

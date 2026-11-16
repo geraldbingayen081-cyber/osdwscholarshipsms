@@ -209,7 +209,8 @@
                                             <svg class="w-3.5 h-3.5 text-[#FFC107]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                             </svg>
-                                            Review App
+                                            Review Application
+                                            
                                         </a>
                                     </td>
                                 </tr>
@@ -246,7 +247,7 @@
                         <svg class="w-6 h-6 text-[#3B060F] mb-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        <span class="text-[11px] font-extrabold">Review Apps</span>
+                        <span class="text-[11px] font-extrabold">Review Application</span>
                     </a>
 
                     <a href="{{ route('admin.compliance.index') }}" class="p-3.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 transition flex flex-col items-center justify-center text-center">

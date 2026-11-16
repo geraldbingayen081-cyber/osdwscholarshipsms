@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
+use App\Models\SystemLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 
 class StudentProfileController extends Controller
 {
@@ -95,7 +98,56 @@ class StudentProfileController extends Controller
             ]);
         });
 
+        SystemLog::record(
+            'Student',
+            'update_profile',
+            "Student {$user->full_name} updated their profile and academic details.",
+            $student,
+            [
+                'student_number' => $student->student_number,
+                'course' => $student->course,
+                'year_level' => $student->year_level,
+                'photo_updated' => $request->hasFile('profile_photo'),
+            ],
+            $user
+        );
+
         return redirect()->route('student.profile.show')
             ->with('success', 'Your student profile and photo have been updated successfully.');
+    }
+
+    /**
+     * Update student account password.
+     */
+    public function updatePassword(Request $request)
+    {
+        $user = Auth::user();
+
+        $validated = $request->validate([
+            'current_password' => ['required', 'current_password'],
+            'password' => ['required', 'string', 'min:8', 'confirmed', Password::defaults()],
+        ], [
+            'current_password.required' => 'Please enter your current password.',
+            'current_password.current_password' => 'The current password you entered is incorrect.',
+            'password.required' => 'Please enter a new password.',
+            'password.min' => 'The new password must be at least 8 characters.',
+            'password.confirmed' => 'The new password confirmation does not match.',
+        ]);
+
+        $user->update([
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        SystemLog::record(
+            'Security',
+            'password_change',
+            "Student {$user->full_name} updated their account password.",
+            $user,
+            ['user_id' => $user->id, 'email' => $user->email],
+            $user
+        );
+
+        return redirect()->route('student.profile.show')
+            ->with('password_success', 'Your account password has been changed successfully.');
     }
 }

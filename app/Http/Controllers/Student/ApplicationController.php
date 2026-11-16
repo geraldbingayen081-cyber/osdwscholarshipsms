@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Application;
 use App\Models\ApplicationDocument;
 use App\Models\Scholarship;
+use App\Models\SystemLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -171,6 +172,19 @@ class ApplicationController extends Controller
         });
 
         if ($createdApplication) {
+            SystemLog::record(
+                'Application',
+                'submit_application',
+                "Student " . (Auth::user()->full_name ?? 'Student') . " submitted an application for {$scholarship->name} (#APP-{$createdApplication->id}).",
+                $createdApplication,
+                [
+                    'application_id' => $createdApplication->id,
+                    'scholarship_id' => $scholarship->id,
+                    'scholarship_name' => $scholarship->name,
+                ],
+                Auth::user()
+            );
+
             // Notify Student User
             if (Auth::user()) {
                 Auth::user()->notify(new \App\Notifications\ApplicationSubmittedNotification($createdApplication, false));
@@ -234,7 +248,7 @@ class ApplicationController extends Controller
         }
 
         $deficientDocs = $application->documents()
-            ->where(fn ($q) => $q->whereIn('status', ['needs_resubmission', 'rejected', 'deficient'])->orWhere('verification_status', 'rejected'))
+            ->where(fn ($q) => $q->whereIn('status', ['needs_resubmission', 'rejected', 'deficient']))
             ->get();
 
         $rules = [];
@@ -242,8 +256,9 @@ class ApplicationController extends Controller
 
         foreach ($deficientDocs as $doc) {
             $fieldName = 'doc_replace_' . $doc->id;
+            $docName = $doc->requirement->requirement_name ?? 'Document';
             $rules[$fieldName] = ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'];
-            $messages["{$fieldName}.required"] = "Please upload replacement file for {$doc->doc_type}";
+            $messages["{$fieldName}.required"] = "Please upload replacement file for {$docName}";
         }
 
         $request->validate($rules, $messages);
@@ -255,11 +270,14 @@ class ApplicationController extends Controller
                 $originalName = $file->getClientOriginalName();
                 $path = $file->store("private/documents/{$application->id}", 'local');
 
+                if ($doc->file_path && Storage::disk('local')->exists($doc->file_path)) {
+                    Storage::disk('local')->delete($doc->file_path);
+                }
+
                 $doc->update([
                     'file_path' => $path,
                     'original_filename' => $originalName,
                     'status' => 'pending',
-                    'verification_status' => 'pending',
                     'remarks' => null,
                     'verified_at' => null,
                 ]);
@@ -269,8 +287,83 @@ class ApplicationController extends Controller
         // Return application status to under_review
         $application->update(['status' => 'under_review']);
 
+        SystemLog::record(
+            'Application',
+            'resolve_deficiency',
+            "Student replaced deficient documents for Application #APP-{$application->id}.",
+            $application,
+            [
+                'application_id' => $application->id,
+                'replaced_documents_count' => $deficientDocs->count(),
+            ],
+            Auth::user()
+        );
+
         return redirect()->route('student.applications.show', $application->id)
             ->with('success', 'Deficient documents successfully replaced and resubmitted! Application is now under OSDW review.');
+    }
+
+    /**
+     * Resubmit an individual application document.
+     */
+    public function resubmitDocument(Request $request, ApplicationDocument $document)
+    {
+        $student = Auth::user()->student;
+
+        if (!$student || $document->application->student_id !== $student->id) {
+            abort(403, 'Unauthorized access to document.');
+        }
+
+        $request->validate([
+            'document_file' => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
+        ], [
+            'document_file.required' => 'Please select a replacement file to upload.',
+            'document_file.mimes' => 'Document must be a file of type: PDF, JPG, JPEG, or PNG.',
+            'document_file.max' => 'Document file size must not exceed 5MB.',
+        ]);
+
+        $file = $request->file('document_file');
+        $originalName = $file->getClientOriginalName();
+        $path = $file->store("private/documents/{$document->application_id}", 'local');
+
+        // Delete previous physical file if it exists
+        if ($document->file_path && Storage::disk('local')->exists($document->file_path)) {
+            Storage::disk('local')->delete($document->file_path);
+        }
+
+        $document->update([
+            'file_path' => $path,
+            'original_filename' => $originalName,
+            'status' => 'pending',
+            'remarks' => null,
+            'verified_at' => null,
+        ]);
+
+        // Check if there are other documents still marked as needs_resubmission
+        $hasRemainingDeficiencies = $document->application->documents()
+            ->where('id', '!=', $document->id)
+            ->where('status', 'needs_resubmission')
+            ->exists();
+
+        // If no more deficient documents remain and application was incomplete, transition back to under_review
+        if (!$hasRemainingDeficiencies && in_array($document->application->status, ['incomplete', 'deficient'])) {
+            $document->application->update(['status' => 'under_review']);
+        }
+
+        SystemLog::record(
+            'Application',
+            'resubmit_document',
+            "Student resubmitted document '{$originalName}' for Application #APP-{$document->application_id}.",
+            $document,
+            [
+                'application_id' => $document->application_id,
+                'document_id' => $document->id,
+                'original_filename' => $originalName,
+            ]
+        );
+
+        return redirect()->route('student.applications.show', $document->application_id)
+            ->with('success', 'Document re-uploaded successfully and submitted for OSDW review.');
     }
 
     /**

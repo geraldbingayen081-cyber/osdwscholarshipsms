@@ -99,10 +99,10 @@
         <!-- Filter & Search Toolbar Card -->
         <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xs mb-6">
             <form method="GET" action="{{ route('admin.system-logs.index') }}" class="space-y-3">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
                     
                     <!-- Search Input (4 cols) -->
-                    <div class="lg:col-span-4">
+                    <div class="sm:col-span-4">
                         <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
                             Search Query
                         </label>
@@ -121,7 +121,7 @@
                     </div>
 
                     <!-- Category / Log Type (3 cols) -->
-                    <div class="lg:col-span-3">
+                    <div class="sm:col-span-3">
                         <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
                             Log Category
                         </label>
@@ -137,7 +137,7 @@
                     </div>
 
                     <!-- Timeframe Select (3 cols) -->
-                    <div class="lg:col-span-3">
+                    <div class="sm:col-span-3">
                         <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
                             Timeframe
                         </label>
@@ -154,7 +154,7 @@
                     </div>
 
                     <!-- Filter Action Buttons (2 cols) -->
-                    <div class="lg:col-span-2 flex items-end gap-2">
+                    <div class="sm:col-span-2 flex items-end gap-2">
                         <button type="submit" 
                                 class="flex-1 py-2 px-3 bg-[#3B060F] hover:bg-[#500A15] text-[#FFC107] font-bold text-xs rounded-xl transition shadow-xs text-center cursor-pointer">
                             Filter

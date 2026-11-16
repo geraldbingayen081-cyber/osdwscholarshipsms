@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-slate-50 dark:bg-slate-950">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="min-h-full bg-slate-50 dark:bg-slate-950">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -31,10 +31,10 @@
         [x-cloak] { display: none !important; }
     </style>
 </head>
-<body class="font-sans antialiased h-full text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-slate-950 flex flex-col justify-between transition-colors duration-200">
+<body class="font-sans antialiased min-h-screen text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-slate-950 flex flex-col justify-between transition-colors duration-200">
 
     <!-- Top Institutional Banner -->
-    <header class="bg-csu-green dark:bg-[#250308] border-b-4 border-csu-gold shadow-md text-white transition-colors duration-200">
+    <header class="sticky top-0 z-50 w-full bg-csu-green dark:bg-[#250308] border-b-4 border-csu-gold shadow-md text-white transition-colors duration-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
             <div class="flex items-center space-x-4">
                 <button type="button" onclick="toggleTheme()" class="cursor-pointer focus:outline-none rounded-full transition transform active:scale-95">

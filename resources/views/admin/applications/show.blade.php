@@ -245,7 +245,6 @@
                             <label class="block text-xs font-bold text-slate-700 mb-1.5">Update Status</label>
                             <select name="status" x-model="currentStatus" class="w-full py-2 px-3 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
                                 <option value="submitted">Submitted</option>
-                                <option value="under_review">Under Review</option>
                                 <option value="incomplete">Incomplete Document(s)</option>
                                 <option value="approved">Approved (Enroll as Scholar)</option>
                                 <option value="rejected">Rejected</option>

@@ -137,6 +137,20 @@ class StudentComplianceController extends Controller
         $scholarCompliance->update(['submitted_at' => now()]);
         $scholarCompliance->recalculateStatus();
 
+        \App\Models\SystemLog::record(
+            'Compliance',
+            'submit_document',
+            "Student submitted compliance document '{$originalName}' for requirement '{$requirement->name}' ({$complianceRequest->title}).",
+            $scholarCompliance,
+            [
+                'compliance_request_id' => $complianceRequest->id,
+                'requirement_id' => $requirement->id,
+                'requirement_name' => $requirement->name,
+                'original_filename' => $originalName,
+            ],
+            Auth::user()
+        );
+
         return back()->with('success', "File for '{$requirement->name}' was uploaded successfully.");
     }
 

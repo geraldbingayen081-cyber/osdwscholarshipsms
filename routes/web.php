@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\SemesterController;
 use App\Http\Controllers\Admin\StudentManagementController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Student\ActivityLogController;
 use App\Http\Controllers\Student\ApplicationController;
 use App\Http\Controllers\Student\NotificationController;
 use App\Http\Controllers\Student\ScholarRenewalController;
@@ -172,9 +173,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')->group(function () {
     Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
 
-    // Profile Management
+    // Profile & Password Management
     Route::get('/profile', [StudentProfileController::class, 'show'])->name('profile.show');
     Route::put('/profile', [StudentProfileController::class, 'update'])->name('profile.update');
+    Route::put('/password', [StudentProfileController::class, 'updatePassword'])->name('password.update');
 
     // Available Scholarships
     Route::get('/scholarships', [StudentScholarshipController::class, 'index'])->name('scholarships.index');
@@ -214,4 +216,7 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')
     Route::post('/welfare-cases', [\App\Http\Controllers\Student\WelfareCaseController::class, 'store'])->name('welfare-cases.store');
     Route::get('/welfare-cases/{welfareCase}', [\App\Http\Controllers\Student\WelfareCaseController::class, 'show'])->name('welfare-cases.show');
     Route::get('/welfare-cases/documents/{document}/view', [\App\Http\Controllers\Student\WelfareCaseController::class, 'viewDocument'])->name('welfare-cases.documents.view');
+
+    // Activity Logs
+    Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
 });

@@ -24,8 +24,8 @@
                        name="search" 
                        value="{{ $search }}" 
                        placeholder="Search student name, email, or Student ID (e.g. 26-32424)..." 
-                       {{ $search ? 'autofocus onfocus="this.setSelectionRange(this.value.length, this.value.length)"' : '' }}
-                       oninput="clearTimeout(window._searchTimer); window._searchTimer = setTimeout(() => this.form.submit(), 400)"
+                       @if($search) autofocus onfocus="this.setSelectionRange(this.value.length, this.value.length)" @endif
+                       oninput="window.triggerLiveSearch ? window.triggerLiveSearch(this.form) : (clearTimeout(window._searchTimer), window._searchTimer = setTimeout(() => this.form.submit(), 500))"
                        class="w-full py-2 pl-9 pr-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
             </div>
 

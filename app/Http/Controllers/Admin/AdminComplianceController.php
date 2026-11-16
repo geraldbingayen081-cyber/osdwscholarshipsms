@@ -244,6 +244,12 @@ class AdminComplianceController extends Controller
         ]);
 
         if ($validated['verification_status'] === 'needs_correction' && empty($validated['admin_remarks'])) {
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Please provide a reason or correction instruction for the student.',
+                ], 422);
+            }
             return back()->with('error', 'Please provide a reason or correction instruction for the student.');
         }
 

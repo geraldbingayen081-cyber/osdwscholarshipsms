@@ -220,6 +220,13 @@
                             <span class="h-4 w-4 bg-red-600 text-white rounded-full text-[10px] flex items-center justify-center font-bold">{{ $unreadCount }}</span>
                         @endif
                     </a>
+
+                    <a href="{{ route('student.activity-logs.index') }}" class="flex items-center px-3.5 py-2.5 text-xs font-bold rounded-xl transition {{ request()->routeIs('student.activity-logs.*') ? 'bg-[#FFC107] text-[#3B060F] font-extrabold shadow-xs' : 'text-slate-200 hover:bg-[#500A15] hover:text-white' }}">
+                        <svg class="w-4 h-4 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Activity Log
+                    </a>
                 @endif
             </nav>
 
@@ -394,6 +401,109 @@
                     window.location.reload();
                 }
             });
+
+            // Keep cursor at the end of autofocused search inputs on page load
+            function moveSearchCursorToEnd() {
+                document.querySelectorAll('input[name="search"][autofocus]').forEach(function(input) {
+                    const len = input.value.length;
+                    input.focus();
+                    try {
+                        input.setSelectionRange(len, len);
+                    } catch (e) {}
+                });
+            }
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', moveSearchCursorToEnd);
+            } else {
+                moveSearchCursorToEnd();
+            }
+
+            // Live AJAX search to prevent page-reload cursor resets while typing
+            let activeSearchController = null;
+            window.performLiveSearch = function(form) {
+                if (!form) return;
+                if (activeSearchController) {
+                    activeSearchController.abort();
+                }
+                activeSearchController = new AbortController();
+
+                const url = new URL(form.action, window.location.origin);
+                const formData = new FormData(form);
+                formData.forEach((value, key) => {
+                    if (value !== '') {
+                        url.searchParams.set(key, value);
+                    } else {
+                        url.searchParams.delete(key);
+                    }
+                });
+
+                if (window.history && window.history.replaceState) {
+                    window.history.replaceState({ page: 'protected_dashboard' }, document.title, url.toString());
+                }
+
+                const resetBtn = document.getElementById('compliance-search-reset');
+                if (resetBtn) {
+                    const hasSearch = (formData.get('search') || '').trim().length > 0;
+                    const hasStatus = (formData.get('status') || '').trim().length > 0;
+                    resetBtn.style.display = (hasSearch || hasStatus) ? '' : 'none';
+                }
+
+                fetch(url.toString(), {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    signal: activeSearchController.signal
+                })
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+
+                    const currentStats = document.getElementById('compliance-stats-container');
+                    const newStats = doc.getElementById('compliance-stats-container');
+                    if (currentStats && newStats) {
+                        currentStats.innerHTML = newStats.innerHTML;
+                    }
+
+                    const currentMatrix = document.getElementById('compliance-matrix-container');
+                    const newMatrix = doc.getElementById('compliance-matrix-container');
+                    if (currentMatrix && newMatrix) {
+                        currentMatrix.innerHTML = newMatrix.innerHTML;
+                        return;
+                    }
+
+                    const formWrapper = form.closest('div.mb-6, div.p-4') || form.parentElement;
+                    const currentTarget = formWrapper ? formWrapper.nextElementSibling : null;
+                    if (currentTarget) {
+                        const newForm = doc.querySelector(`form[action="${form.getAttribute('action')}"]`);
+                        const newFormWrapper = newForm ? (newForm.closest('div.mb-6, div.p-4') || newForm.parentElement) : null;
+                        const newTarget = newFormWrapper ? newFormWrapper.nextElementSibling : null;
+                        if (newTarget) {
+                            currentTarget.innerHTML = newTarget.innerHTML;
+                        }
+                    }
+                })
+                .catch(err => {
+                    if (err.name !== 'AbortError') {
+                        form.submit();
+                    }
+                });
+            };
+
+            window.triggerComplianceLiveSearch = function(form) {
+                clearTimeout(window._searchTimer);
+                window._searchTimer = setTimeout(() => window.performLiveSearch(form), 300);
+            };
+
+            window.triggerLiveSearch = function(form) {
+                clearTimeout(window._searchTimer);
+                window._searchTimer = setTimeout(() => window.performLiveSearch(form), 300);
+            };
+
+            window.handleComplianceSearchSubmit = function(form, event) {
+                if (event) event.preventDefault();
+                clearTimeout(window._searchTimer);
+                window.performLiveSearch(form);
+                return false;
+            };
         })();
     </script>
 

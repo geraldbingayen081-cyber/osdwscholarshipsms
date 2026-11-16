@@ -116,8 +116,8 @@ x-init="
                        name="search" 
                        value="{{ $search }}" 
                        placeholder="Search grantee name, email, or Student ID (00-00000)..." 
-                       {{ $search ? 'autofocus onfocus="this.setSelectionRange(this.value.length, this.value.length)"' : '' }}
-                       oninput="clearTimeout(window._searchTimer); window._searchTimer = setTimeout(() => this.form.submit(), 400)"
+                       @if($search) autofocus onfocus="this.setSelectionRange(this.value.length, this.value.length)" @endif
+                       oninput="window.triggerLiveSearch ? window.triggerLiveSearch(this.form) : (clearTimeout(window._searchTimer), window._searchTimer = setTimeout(() => this.form.submit(), 500))"
                        class="w-full py-2 pl-9 pr-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
             </div>
 
@@ -140,16 +140,45 @@ x-init="
 
     <!-- Student Grantees Table List Card -->
     <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-200 dark:border-slate-800 overflow-hidden">
-        <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex items-center justify-between">
+        <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex flex-wrap items-center justify-between gap-3">
             <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider flex items-center gap-2">
                 <svg class="w-4 h-4 text-[#3B060F] dark:text-[#FFC107]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                 </svg>
                 Student Grantees Roster
             </h3>
-            <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">
-                Showing {{ $scholars->firstItem() ?? 0 }} to {{ $scholars->lastItem() ?? 0 }} of {{ $scholars->total() }} Grantees
-            </span>
+            <div class="flex items-center gap-3">
+                <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                    Showing {{ $scholars->firstItem() ?? 0 }} to {{ $scholars->lastItem() ?? 0 }} of {{ $scholars->total() }} Grantees
+                </span>
+                @if($scholars->hasPages())
+                    <div class="inline-flex items-center gap-1">
+                        @if($scholars->onFirstPage())
+                            <span class="inline-flex items-center px-2.5 py-1 text-xs font-bold text-slate-300 dark:text-slate-600 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg cursor-not-allowed">
+                                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                                Prev
+                            </span>
+                        @else
+                            <a href="{{ $scholars->previousPageUrl() }}" class="inline-flex items-center px-2.5 py-1 text-xs font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition shadow-2xs">
+                                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                                Prev
+                            </a>
+                        @endif
+
+                        @if($scholars->hasMorePages())
+                            <a href="{{ $scholars->nextPageUrl() }}" class="inline-flex items-center px-2.5 py-1 text-xs font-bold text-white bg-[#3B060F] border border-[#3B060F] rounded-lg hover:bg-[#6B0F1A] transition shadow-2xs">
+                                Next
+                                <svg class="w-3.5 h-3.5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                            </a>
+                        @else
+                            <span class="inline-flex items-center px-2.5 py-1 text-xs font-bold text-slate-300 dark:text-slate-600 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg cursor-not-allowed">
+                                Next
+                                <svg class="w-3.5 h-3.5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                            </span>
+                        @endif
+                    </div>
+                @endif
+            </div>
         </div>
 
         <div class="overflow-x-auto">
@@ -269,7 +298,7 @@ x-init="
         </div>
 
         @if($scholars->hasPages())
-            <div class="px-6 py-4 border-t border-slate-200 bg-slate-50">
+            <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
                 {{ $scholars->links() }}
             </div>
         @endif

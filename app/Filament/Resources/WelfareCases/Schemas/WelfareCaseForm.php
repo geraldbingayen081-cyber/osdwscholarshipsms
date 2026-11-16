@@ -21,17 +21,9 @@ class WelfareCaseForm
                     ->required()
                     ->searchable(),
                 Select::make('category')
-                    ->options([
-                        'Financial Assistance' => '💰 Financial Assistance',
-                        'Guidance and Counseling' => '🌱 Guidance and Counseling',
-                        'Medical / Health Concern' => '🏥 Medical / Health Concern',
-                        'Academic Grievance' => '📚 Academic Grievance',
-                        'Student Conduct / Discipline' => '⚖️ Student Conduct / Discipline',
-                        'Housing / Dormitory' => '🏠 Housing / Dormitory',
-                        'Other' => '📌 Other Welfare Concern',
-                    ])
+                    ->options(\App\Models\WelfareCase::categoryOptions())
                     ->required()
-                    ->default('Financial Assistance'),
+                    ->default(\App\Models\WelfareCase::CATEGORY_SCHOLARSHIP),
                 Select::make('status')
                     ->options([
                         'Open' => 'Open',

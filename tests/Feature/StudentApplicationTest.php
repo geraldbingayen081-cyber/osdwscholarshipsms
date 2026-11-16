@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\AcademicYear;
 use App\Models\Application;
+use App\Models\ApplicationDocument;
 use App\Models\Scholarship;
 use App\Models\ScholarshipRequirement;
 use App\Models\Semester;
@@ -239,5 +240,104 @@ class StudentApplicationTest extends TestCase
         $responseShow->assertStatus(200);
         $responseShow->assertSee('Active Scholar (Applications Restricted)');
         $responseShow->assertSee('Application Ineligible: Active Scholar');
+    }
+
+    public function test_student_can_resubmit_flagged_document()
+    {
+        Storage::fake('local');
+
+        $req = ScholarshipRequirement::create([
+            'scholarship_id' => $this->scholarship->id,
+            'requirement_name' => 'Certificate of Registration',
+            'requirement_type' => 'document',
+            'is_required' => true,
+            'status' => 'active',
+        ]);
+
+        $application = Application::create([
+            'student_id' => $this->student->id,
+            'scholarship_id' => $this->scholarship->id,
+            'status' => 'incomplete',
+            'submitted_at' => now(),
+        ]);
+
+        $document = ApplicationDocument::create([
+            'application_id' => $application->id,
+            'scholarship_requirement_id' => $req->id,
+            'file_path' => 'private/documents/' . $application->id . '/old_cor.pdf',
+            'original_filename' => 'old_cor.pdf',
+            'status' => 'needs_resubmission',
+            'remarks' => 'Please upload clear scan',
+        ]);
+
+        $file = UploadedFile::fake()->create('new_cor.pdf', 500, 'application/pdf');
+
+        $response = $this->actingAs($this->studentUser)
+            ->post(route('student.documents.resubmit', $document->id), [
+                'document_file' => $file,
+            ]);
+
+        $response->assertRedirect(route('student.applications.show', $application->id));
+        $response->assertSessionHas('success');
+
+        $document->refresh();
+        $this->assertEquals('pending', $document->status);
+        $this->assertEquals('new_cor.pdf', $document->original_filename);
+        $this->assertNull($document->remarks);
+
+        $application->refresh();
+        $this->assertEquals('under_review', $application->status);
+    }
+
+    public function test_student_cannot_resubmit_other_students_document()
+    {
+        Storage::fake('local');
+
+        $otherUser = User::create([
+            'first_name' => 'Maria',
+            'last_name' => 'Santos',
+            'email' => 'maria@csu.edu.ph',
+            'password' => bcrypt('password123'),
+            'role' => 'student',
+        ]);
+
+        $otherStudent = Student::create([
+            'user_id' => $otherUser->id,
+            'student_number' => '26-99999',
+            'course' => 'BSIT',
+            'year_level' => '2nd Year',
+        ]);
+
+        $req = ScholarshipRequirement::create([
+            'scholarship_id' => $this->scholarship->id,
+            'requirement_name' => 'Certificate of Grades',
+            'requirement_type' => 'document',
+            'is_required' => true,
+            'status' => 'active',
+        ]);
+
+        $application = Application::create([
+            'student_id' => $otherStudent->id,
+            'scholarship_id' => $this->scholarship->id,
+            'status' => 'incomplete',
+            'submitted_at' => now(),
+        ]);
+
+        $document = ApplicationDocument::create([
+            'application_id' => $application->id,
+            'scholarship_requirement_id' => $req->id,
+            'file_path' => 'private/documents/' . $application->id . '/cog.pdf',
+            'original_filename' => 'cog.pdf',
+            'status' => 'needs_resubmission',
+        ]);
+
+        $file = UploadedFile::fake()->create('replacement.pdf', 500, 'application/pdf');
+
+        $response = $this->actingAs($this->studentUser)
+            ->post(route('student.documents.resubmit', $document->id), [
+                'document_file' => $file,
+            ]);
+
+        $response->assertStatus(403);
     }
 }

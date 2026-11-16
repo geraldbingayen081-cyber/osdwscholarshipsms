@@ -282,21 +282,85 @@ class ApplicationController extends Controller
             'remarks' => ['nullable', 'string', 'max:500'],
         ]);
 
-        DB::transaction(function () use ($document, $validated) {
+        $autoApproved = false;
+
+        DB::transaction(function () use ($document, $validated, &$autoApproved) {
             $document->update([
                 'status' => $validated['status'],
                 'remarks' => $validated['remarks'] ?? null,
                 'verified_at' => $validated['status'] === 'verified' ? now() : null,
             ]);
 
-            // If document requires resubmission, update application status to 'incomplete'
-            if ($validated['status'] === 'needs_resubmission') {
-                $document->application->update(['status' => 'incomplete']);
+            $application = $document->application()->with(['documents', 'scholarship.requirements', 'student.user'])->first();
+
+            // Notify student user about this document's status
+            if ($application && $application->student && $application->student->user) {
+                $application->student->user->notify(new DocumentStatusUpdated($document, $validated['status'], $validated['remarks'] ?? null));
             }
 
-            // Notify student user
-            if ($document->application->student && $document->application->student->user) {
-                $document->application->student->user->notify(new DocumentStatusUpdated($document, $validated['status'], $validated['remarks'] ?? null));
+            if ($application) {
+                if ($validated['status'] === 'needs_resubmission') {
+                    // If document requires resubmission, update application status to 'incomplete'
+                    $application->update(['status' => 'incomplete']);
+                    Scholar::where('application_id', $application->id)->delete();
+                } elseif ($validated['status'] === 'verified') {
+                    // Check if all required documents and all submitted documents are now verified
+                    $docs = $application->documents;
+                    $requiredReqIds = $application->scholarship
+                        ? $application->scholarship->requirements
+                            ->where('requirement_type', 'document')
+                            ->where('status', 'active')
+                            ->where('is_required', true)
+                            ->pluck('id')
+                        : collect();
+
+                    $allSubmittedVerified = $docs->isNotEmpty() && $docs->every(fn ($d) => $d->status === 'verified');
+                    $allRequiredVerified = $requiredReqIds->every(function ($reqId) use ($docs) {
+                        $doc = $docs->firstWhere('scholarship_requirement_id', $reqId);
+                        return $doc && $doc->status === 'verified';
+                    });
+
+                    if ($allSubmittedVerified && $allRequiredVerified) {
+                        $wasApproved = $application->status === 'approved';
+                        $oldStatus = $application->status;
+
+                        $application->update(['status' => 'approved']);
+
+                        $scholar = Scholar::updateOrCreate(
+                            ['application_id' => $application->id],
+                            [
+                                'student_id' => $application->student_id,
+                                'scholarship_id' => $application->scholarship_id,
+                                'status' => 'active',
+                                'approved_at' => now(),
+                            ]
+                        );
+
+                        if (!$wasApproved) {
+                            $autoApproved = true;
+
+                            if ($application->student && $application->student->user) {
+                                $application->student->user->notify(
+                                    new ApplicationStatusUpdated($application, 'All submitted requirement documents have been verified. Your application is now Approved!')
+                                );
+                            }
+
+                            \App\Models\SystemLog::record(
+                                'Application',
+                                'auto_approved',
+                                "Application #APP-{$application->id} for " . ($application->student->user->full_name ?? 'Student') . " was automatically Approved after all requirement documents were verified.",
+                                $application,
+                                [
+                                    'old_status' => $oldStatus,
+                                    'new_status' => 'approved',
+                                    'scholar_id' => $scholar->id,
+                                ]
+                            );
+                        }
+                    } elseif ($application->status === 'incomplete' && !$docs->contains(fn ($d) => $d->status === 'needs_resubmission')) {
+                        $application->update(['status' => 'under_review']);
+                    }
+                }
             }
 
             \App\Models\SystemLog::record(
@@ -313,8 +377,12 @@ class ApplicationController extends Controller
             );
         });
 
+        $successMessage = $autoApproved
+            ? 'All requirement documents verified! Application status automatically changed to Approved and student enrolled as an Active Scholar.'
+            : 'Document verification status saved successfully.';
+
         return redirect()->route('admin.applications.show', $document->application_id)
-            ->with('success', 'Document verification status saved successfully.');
+            ->with('success', $successMessage);
     }
 
     /**

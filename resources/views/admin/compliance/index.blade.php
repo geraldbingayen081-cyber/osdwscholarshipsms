@@ -85,8 +85,8 @@
                            name="search" 
                            value="{{ $search }}" 
                            placeholder="Search request title, semester, or scholarship..." 
-                           {{ $search ? 'autofocus onfocus="this.setSelectionRange(this.value.length, this.value.length)"' : '' }}
-                           oninput="clearTimeout(window._searchTimer); window._searchTimer = setTimeout(() => this.form.submit(), 400)"
+                           @if($search) autofocus onfocus="this.setSelectionRange(this.value.length, this.value.length)" @endif
+                           oninput="window.triggerLiveSearch ? window.triggerLiveSearch(this.form) : (clearTimeout(window._searchTimer), window._searchTimer = setTimeout(() => this.form.submit(), 500))"
                            class="w-full py-2 pl-9 pr-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
                 </div>
 
@@ -120,16 +120,45 @@
 
         <!-- Compliance Requests Table -->
         <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-200 dark:border-slate-800 overflow-hidden">
-            <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex items-center justify-between">
+            <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex flex-wrap items-center justify-between gap-3">
                 <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider flex items-center gap-2">
                     <svg class="w-4 h-4 text-[#3B060F] dark:text-[#FFC107]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                     </svg>
                     Compliance Requests Batch Log
                 </h3>
-                <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">
-                    Showing {{ $complianceRequests->firstItem() ?? 0 }} to {{ $complianceRequests->lastItem() ?? 0 }} of {{ $complianceRequests->total() }} Requests
-                </span>
+                <div class="flex items-center gap-3">
+                    <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                        Showing {{ $complianceRequests->firstItem() ?? 0 }} to {{ $complianceRequests->lastItem() ?? 0 }} of {{ $complianceRequests->total() }} Requests
+                    </span>
+                    @if($complianceRequests->hasPages())
+                        <div class="inline-flex items-center gap-1">
+                            @if($complianceRequests->onFirstPage())
+                                <span class="inline-flex items-center px-2.5 py-1 text-xs font-bold text-slate-300 dark:text-slate-600 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg cursor-not-allowed">
+                                    <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                                    Prev
+                                </span>
+                            @else
+                                <a href="{{ $complianceRequests->previousPageUrl() }}" class="inline-flex items-center px-2.5 py-1 text-xs font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition shadow-2xs">
+                                    <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                                    Prev
+                                </a>
+                            @endif
+
+                            @if($complianceRequests->hasMorePages())
+                                <a href="{{ $complianceRequests->nextPageUrl() }}" class="inline-flex items-center px-2.5 py-1 text-xs font-bold text-white bg-[#3B060F] border border-[#3B060F] rounded-lg hover:bg-[#6B0F1A] transition shadow-2xs">
+                                    Next
+                                    <svg class="w-3.5 h-3.5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                                </a>
+                            @else
+                                <span class="inline-flex items-center px-2.5 py-1 text-xs font-bold text-slate-300 dark:text-slate-600 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg cursor-not-allowed">
+                                    Next
+                                    <svg class="w-3.5 h-3.5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                                </span>
+                            @endif
+                        </div>
+                    @endif
+                </div>
             </div>
 
             <div class="overflow-x-auto">
@@ -227,7 +256,7 @@
                                     <div class="flex items-center justify-end gap-2">
                                         <a href="{{ route('admin.compliance.show', $req->id) }}" 
                                            class="inline-flex items-center px-3 py-1.5 bg-[#3B060F] text-white font-bold rounded-lg text-xs hover:bg-[#6B0F1A] transition shadow-xs cursor-pointer shrink-0">
-                                            Monitor Roster
+                                            Monitor Compliance
                                             <svg class="w-3.5 h-3.5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                                             </svg>
@@ -266,7 +295,7 @@
             </div>
 
             @if($complianceRequests->hasPages())
-                <div class="px-6 py-4 border-t border-slate-200 bg-slate-50">
+                <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
                     {{ $complianceRequests->links() }}
                 </div>
             @endif

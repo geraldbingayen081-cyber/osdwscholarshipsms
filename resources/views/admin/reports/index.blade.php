@@ -127,12 +127,11 @@
                                 </label>
                                 <select name="category" onchange="this.form.submit()" class="w-full py-2.5 px-3 bg-slate-50 border border-slate-300 rounded-xl text-xs font-medium text-slate-800 focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
                                     <option value="">All Categories</option>
-                                    <option value="Financial Assistance" {{ $category === 'Financial Assistance' ? 'selected' : '' }}>Financial Assistance</option>
-                                    <option value="Academic Hardship" {{ $category === 'Academic Hardship' ? 'selected' : '' }}>Academic Hardship</option>
-                                    <option value="Health / Medical Concern" {{ $category === 'Health / Medical Concern' ? 'selected' : '' }}>Health / Medical Concern</option>
-                                    <option value="Family / Personal Crisis" {{ $category === 'Family / Personal Crisis' ? 'selected' : '' }}>Family / Personal Crisis</option>
-                                    <option value="Emergency Relief" {{ $category === 'Emergency Relief' ? 'selected' : '' }}>Emergency Relief</option>
-                                    <option value="Other" {{ $category === 'Other' ? 'selected' : '' }}>Other</option>
+                                    @foreach(\App\Models\WelfareCase::CATEGORIES as $cat)
+                                        <option value="{{ $cat }}" {{ $category === $cat ? 'selected' : '' }}>
+                                            {{ $cat }}
+                                        </option>
+                                    @endforeach
                                 </select>
                             </div>
 

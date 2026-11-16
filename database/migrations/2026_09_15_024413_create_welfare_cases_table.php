@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('case_id')->unique();
             $table->foreignId('student_id')->constrained()->cascadeOnDelete();
-            $table->string('category')->default('Financial Assistance'); // 'Financial Assistance', 'Other', etc.
+            $table->string('category')->default(\App\Models\WelfareCase::CATEGORY_SCHOLARSHIP); // 'Scholarship and Financial Assistance', etc.
             $table->text('description');
             $table->text('requested_information')->nullable();
             $table->string('status')->default('Open'); // 'Open', 'Under Assessment', 'Referred', 'For Follow-up', 'Resolved', 'Closed'

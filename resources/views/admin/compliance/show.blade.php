@@ -20,6 +20,43 @@
             const ext = (filename || '').split('.').pop().toLowerCase();
             this.previewType = ['jpg', 'jpeg', 'png', 'webp'].includes(ext) ? 'image' : 'pdf';
             this.previewModalOpen = true;
+        },
+        async submitDocVerify(doc, status, remarks) {
+            if ((status === 'needs_correction' || status === 'rejected') && (!remarks || !remarks.trim())) {
+                alert('Please provide a remark or reason for correction/rejection.');
+                return;
+            }
+            const formData = new FormData();
+            formData.append('_token', document.querySelector('meta[name=csrf-token]').content);
+            formData.append('verification_status', status);
+            formData.append('admin_remarks', remarks || '');
+
+            try {
+                const res = await fetch('/admin/compliance-documents/' + doc.document_id + '/verify', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: formData
+                });
+                const data = await res.json();
+                if (!res.ok || !data.success) {
+                    alert(data.message || 'Unable to update document status.');
+                    return;
+                }
+                doc.verification_status = status;
+                doc.admin_remarks = remarks || null;
+                if (this.activeScholar && data.overall_status) {
+                    this.activeScholar.status = data.overall_status;
+                }
+                const searchForm = document.querySelector('form[action*=\"/admin/compliance/\"]');
+                if (window.performLiveSearch && searchForm) {
+                    window.performLiveSearch(searchForm);
+                }
+            } catch (e) {
+                console.error(e);
+            }
         }
     }">
 
@@ -74,7 +111,7 @@
         @endif
 
         <!-- Status Filter Tabs / Stat Counters -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 mb-6">
+        <div id="compliance-stats-container" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 mb-6">
             <!-- Total -->
             <a href="{{ route('admin.compliance.show', $complianceRequest->id) }}" 
                class="p-3 rounded-xl border transition flex flex-col justify-between {{ empty($statusFilter) ? 'bg-[#3B060F] text-white border-[#3B060F] shadow-xs' : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300' }}">
@@ -126,8 +163,8 @@
         </div>
 
         <!-- Dynamic Search Form -->
-        <div class="bg-white rounded-2xl shadow-xs border border-slate-200 p-4 mb-6">
-            <form method="GET" action="{{ route('admin.compliance.show', $complianceRequest->id) }}" class="flex items-center gap-3">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-200 dark:border-slate-800 p-4 mb-6">
+            <form method="GET" action="{{ route('admin.compliance.show', $complianceRequest->id) }}" class="flex items-center gap-3" onsubmit="return window.handleComplianceSearchSubmit ? window.handleComplianceSearchSubmit(this, event) : true">
                 @if($statusFilter)
                     <input type="hidden" name="status" value="{{ $statusFilter }}">
                 @endif
@@ -142,29 +179,59 @@
                            name="search" 
                            value="{{ $search }}" 
                            placeholder="Search scholar name, Student ID (e.g. 26-32424), or email..." 
-                           {{ $search ? 'autofocus onfocus="this.setSelectionRange(this.value.length, this.value.length)"' : '' }}
-                           oninput="clearTimeout(window._searchTimer); window._searchTimer = setTimeout(() => this.form.submit(), 400)"
-                           class="w-full py-2 pl-9 pr-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
+                           @if($search) autofocus onfocus="this.setSelectionRange(this.value.length, this.value.length)" @endif
+                           oninput="window.triggerComplianceLiveSearch ? window.triggerComplianceLiveSearch(this.form) : (clearTimeout(window._searchTimer), window._searchTimer = setTimeout(() => this.form.submit(), 500))"
+                           class="w-full py-2 pl-9 pr-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-[#6B0F1A] focus:outline-none">
                 </div>
 
-                @if($search || $statusFilter)
-                    <a href="{{ route('admin.compliance.show', $complianceRequest->id) }}" class="px-3 py-2 text-xs font-bold text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition shrink-0">Reset</a>
-                @endif
+                <a id="compliance-search-reset"
+                   href="{{ route('admin.compliance.show', $complianceRequest->id) }}" 
+                   style="{{ ($search || $statusFilter) ? '' : 'display: none;' }}"
+                   class="px-3 py-2 text-xs font-bold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition shrink-0">Reset</a>
             </form>
         </div>
 
         <!-- Scholar Compliance Roster Table -->
-        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-200 dark:border-slate-800 overflow-hidden">
-            <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex items-center justify-between">
+        <div id="compliance-matrix-container" class="bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-200 dark:border-slate-800 overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex flex-wrap items-center justify-between gap-3">
                 <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider flex items-center gap-2">
                     <svg class="w-4 h-4 text-[#3B060F] dark:text-[#FFC107]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                     </svg>
                     Scholar Compliance Matrix
                 </h3>
-                <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">
-                    Showing {{ $scholarCompliances->firstItem() ?? 0 }} to {{ $scholarCompliances->lastItem() ?? 0 }} of {{ $scholarCompliances->total() }} Scholars
-                </span>
+                <div class="flex items-center gap-3">
+                    <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                        Showing {{ $scholarCompliances->firstItem() ?? 0 }} to {{ $scholarCompliances->lastItem() ?? 0 }} of {{ $scholarCompliances->total() }} Scholars
+                    </span>
+                    @if($scholarCompliances->hasPages())
+                        <div class="inline-flex items-center gap-1">
+                            @if($scholarCompliances->onFirstPage())
+                                <span class="inline-flex items-center px-2.5 py-1 text-xs font-bold text-slate-300 dark:text-slate-600 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg cursor-not-allowed">
+                                    <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                                    Prev
+                                </span>
+                            @else
+                                <a href="{{ $scholarCompliances->previousPageUrl() }}" class="inline-flex items-center px-2.5 py-1 text-xs font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition shadow-2xs">
+                                    <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                                    Prev
+                                </a>
+                            @endif
+
+                            @if($scholarCompliances->hasMorePages())
+                                <a href="{{ $scholarCompliances->nextPageUrl() }}" class="inline-flex items-center px-2.5 py-1 text-xs font-bold text-white bg-[#3B060F] border border-[#3B060F] rounded-lg hover:bg-[#6B0F1A] transition shadow-2xs">
+                                    Next
+                                    <svg class="w-3.5 h-3.5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                                </a>
+                            @else
+                                <span class="inline-flex items-center px-2.5 py-1 text-xs font-bold text-slate-300 dark:text-slate-600 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg cursor-not-allowed">
+                                    Next
+                                    <svg class="w-3.5 h-3.5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                                </span>
+                            @endif
+                        </div>
+                    @endif
+                </div>
             </div>
 
             <div class="overflow-x-auto">
@@ -322,7 +389,7 @@
             </div>
 
             @if($scholarCompliances->hasPages())
-                <div class="px-6 py-4 border-t border-slate-200 bg-slate-50">
+                <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
                     {{ $scholarCompliances->links() }}
                 </div>
             @endif
@@ -414,9 +481,18 @@
                                 <h3 class="text-base font-extrabold text-slate-900" x-text="activeScholar?.name"></h3>
                                 <span class="font-mono text-xs font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded border border-slate-200" x-text="activeScholar?.student_number"></span>
                             </div>
-                            <p class="text-xs text-slate-500 mt-0.5">
+                            <p class="text-xs text-slate-500 mt-0.5 flex items-center gap-1.5">
                                 <span x-text="activeScholar?.course"></span> • 
-                                <span class="capitalize font-bold text-slate-700" x-text="activeScholar?.status?.replace('_', ' ')"></span>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider"
+                                      :class="{
+                                          'bg-emerald-100 text-emerald-800 border border-emerald-300': activeScholar?.status === 'completed',
+                                          'bg-indigo-100 text-indigo-800 border border-indigo-300': activeScholar?.status === 'under_review' || activeScholar?.status === 'submitted',
+                                          'bg-amber-100 text-amber-800 border border-amber-300': activeScholar?.status === 'needs_correction',
+                                          'bg-blue-100 text-blue-800 border border-blue-300': activeScholar?.status === 'partially_submitted',
+                                          'bg-rose-100 text-rose-800 border border-rose-300': activeScholar?.status === 'overdue',
+                                          'bg-slate-100 text-slate-700 border border-slate-300': !activeScholar?.status || activeScholar?.status === 'not_submitted'
+                                      }"
+                                      x-text="activeScholar?.status === 'completed' ? 'Approved / Completed' : activeScholar?.status?.replace('_', ' ')"></span>
                             </p>
                         </div>
                         <button @click="reviewModalOpen = false" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
@@ -491,7 +567,7 @@
 
                                 <!-- Inline Verification Form for this Document -->
                                 <div class="mt-3 pt-3 border-t border-slate-200/60" x-show="doc.document_id" x-data="{ reviewFormOpen: false, remarks: doc.admin_remarks || '' }">
-                                    <form method="POST" :action="'/admin/compliance-documents/' + doc.document_id + '/verify'" class="space-y-2">
+                                    <form method="POST" :action="'/admin/compliance-documents/' + doc.document_id + '/verify'" @submit.prevent="" class="space-y-2">
                                         @csrf
 
                                         <div x-show="doc.admin_remarks" class="text-[11px] text-amber-800 bg-amber-50 p-2 rounded-lg border border-amber-200 mb-2">
@@ -507,10 +583,9 @@
 
                                             <div class="flex items-center gap-1.5 shrink-0">
                                                 <!-- Verify Button -->
-                                                <button type="submit" 
-                                                        name="verification_status" 
-                                                        value="verified"
-                                                        class="px-2.5 py-1 bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-xs rounded-lg transition shadow-xs flex items-center gap-1">
+                                                <button type="button" 
+                                                        @click="submitDocVerify(doc, 'verified', remarks)"
+                                                        class="px-2.5 py-1 bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-xs rounded-lg transition shadow-xs flex items-center gap-1 cursor-pointer">
                                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                                     </svg>
@@ -518,10 +593,9 @@
                                                 </button>
 
                                                 <!-- Needs Correction Button -->
-                                                <button type="submit" 
-                                                        name="verification_status" 
-                                                        value="needs_correction"
-                                                        class="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-xs rounded-lg transition shadow-xs flex items-center gap-1">
+                                                <button type="button" 
+                                                        @click="submitDocVerify(doc, 'needs_correction', remarks)"
+                                                        class="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-xs rounded-lg transition shadow-xs flex items-center gap-1 cursor-pointer">
                                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                                                     </svg>
@@ -529,10 +603,9 @@
                                                 </button>
 
                                                 <!-- Reject Button -->
-                                                <button type="submit" 
-                                                        name="verification_status" 
-                                                        value="rejected"
-                                                        class="px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs rounded-lg transition shadow-xs">
+                                                <button type="button" 
+                                                        @click="submitDocVerify(doc, 'rejected', remarks)"
+                                                        class="px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs rounded-lg transition shadow-xs cursor-pointer">
                                                     Reject
                                                 </button>
                                             </div>

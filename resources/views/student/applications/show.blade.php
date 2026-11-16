@@ -81,7 +81,7 @@
                         </div>
 
                         <!-- Resubmission Form (If Admin requested resubmission) -->
-                        @if($doc->status === 'needs_resubmission' || $application->status === 'incomplete')
+                        @if($doc->status === 'needs_resubmission' || ($application->status === 'incomplete' && $doc->status !== 'verified'))
                             <div class="bg-rose-50 p-4 rounded-xl border border-rose-200 mt-2 space-y-3">
                                 <p class="text-xs text-rose-800 font-bold">Resubmission Requested: <span class="font-medium text-slate-700">{{ $doc->remarks ?? 'Please re-upload a clear file.' }}</span></p>
                                 

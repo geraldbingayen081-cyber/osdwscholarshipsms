@@ -82,6 +82,70 @@ class SystemLog extends Model
     }
 
     /**
+     * Scope to filter logs belonging to or directly affecting a specific student user.
+     */
+    public function scopeForStudent($query, User $user)
+    {
+        $student = $user->student;
+
+        return $query->where(function ($q) use ($user, $student) {
+            $q->where('user_id', $user->id)
+              ->orWhere(function ($sq) use ($user) {
+                  $sq->where('subject_type', User::class)
+                     ->where('subject_id', $user->id);
+              });
+
+            if ($student) {
+                $appIds = Application::where('student_id', $student->id)->pluck('id');
+                $docIds = ApplicationDocument::whereIn('application_id', $appIds)->pluck('id');
+                $welfareIds = WelfareCase::where('student_id', $student->id)->pluck('id');
+                $scholarIds = Scholar::where('student_id', $student->id)->pluck('id');
+                $complianceIds = ScholarCompliance::whereIn('scholar_id', $scholarIds)->pluck('id');
+
+                $q->orWhere(function ($sq) use ($student) {
+                    $sq->where('subject_type', Student::class)
+                       ->where('subject_id', $student->id);
+                });
+
+                if ($appIds->isNotEmpty()) {
+                    $q->orWhere(function ($sq) use ($appIds) {
+                        $sq->where('subject_type', Application::class)
+                           ->whereIn('subject_id', $appIds);
+                    });
+                }
+
+                if ($docIds->isNotEmpty()) {
+                    $q->orWhere(function ($sq) use ($docIds) {
+                        $sq->where('subject_type', ApplicationDocument::class)
+                           ->whereIn('subject_id', $docIds);
+                    });
+                }
+
+                if ($welfareIds->isNotEmpty()) {
+                    $q->orWhere(function ($sq) use ($welfareIds) {
+                        $sq->where('subject_type', WelfareCase::class)
+                           ->whereIn('subject_id', $welfareIds);
+                    });
+                }
+
+                if ($scholarIds->isNotEmpty()) {
+                    $q->orWhere(function ($sq) use ($scholarIds) {
+                        $sq->where('subject_type', Scholar::class)
+                           ->whereIn('subject_id', $scholarIds);
+                    });
+                }
+
+                if ($complianceIds->isNotEmpty()) {
+                    $q->orWhere(function ($sq) use ($complianceIds) {
+                        $sq->where('subject_type', ScholarCompliance::class)
+                           ->whereIn('subject_id', $complianceIds);
+                    });
+                }
+            }
+        });
+    }
+
+    /**
      * Scope to filter logs by type/category.
      */
     public function scopeFilterByType($query, ?string $type)

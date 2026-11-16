@@ -85,13 +85,9 @@
             <select name="category" 
                     class="w-full sm:w-64 py-2 px-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-[#3B060F] outline-none transition">
                 <option value="">All Categories</option>
-                <option value="Financial Assistance" {{ request('category') === 'Financial Assistance' ? 'selected' : '' }}>Financial Assistance</option>
-                <option value="Guidance and Counseling" {{ request('category') === 'Guidance and Counseling' ? 'selected' : '' }}>Guidance and Counseling</option>
-                <option value="Medical / Health Concern" {{ request('category') === 'Medical / Health Concern' ? 'selected' : '' }}>Medical / Health Concern</option>
-                <option value="Academic Grievance" {{ request('category') === 'Academic Grievance' ? 'selected' : '' }}>Academic Grievance</option>
-                <option value="Student Conduct / Discipline" {{ request('category') === 'Student Conduct / Discipline' ? 'selected' : '' }}>Student Conduct / Discipline</option>
-                <option value="Housing / Dormitory" {{ request('category') === 'Housing / Dormitory' ? 'selected' : '' }}>Housing / Dormitory</option>
-                <option value="Other" {{ request('category') === 'Other' ? 'selected' : '' }}>Other Welfare Concern</option>
+                @foreach(\App\Models\WelfareCase::CATEGORIES as $cat)
+                    <option value="{{ $cat }}" {{ request('category') === $cat ? 'selected' : '' }}>{{ $cat }}</option>
+                @endforeach
             </select>
 
             <button type="submit" class="w-full sm:w-auto px-5 py-2 bg-[#3B060F] text-white font-extrabold text-xs rounded-xl hover:bg-[#6B0F1A] transition shadow-xs cursor-pointer shrink-0">
